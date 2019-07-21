@@ -13,10 +13,14 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.sjsu.cs157a.models.User;
 
 public class UserDAO {
+	
+	private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
 	
 	private SessionFactory sessionFactory;
 
@@ -33,6 +37,7 @@ public class UserDAO {
 			tx = session.beginTransaction();
 			newUser.setPassword(hashPassword(newUser.getPassword()));
 			uID = (Integer) session.save(newUser);
+			logger.info(newUser + " has been registered.");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -52,28 +57,48 @@ public class UserDAO {
 		
 		try {
 			tx = session.beginTransaction();
-			
-			if(!isUserEmail(session, email)) {
+			if((authenticatedUser = isUserEmail(session, email)) == null) {
 				throw new AuthenticationException("The email " + email + " is not registered with our service.");
+			} else if(!authenticatedUser.getPassword().equals(hashPassword(password))) {
+				throw new AuthenticationException("Username or password is incorrect.");
 			}
-			
-			 
-			 
-			
+			logger.info(authenticatedUser + " has been retrieved.");
+			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
 				tx.rollback();
+		} finally {
+			session.close();
 		}
 		
-		return null;
+		return authenticatedUser;
 	}
 	
+	public void removeUser(Integer uID) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		
+		try {
+			tx = session.beginTransaction();
+			User user = (User) session.get(User.class, uID);	
+			session.delete(user);
+			logger.info(user + " has been deleted.");
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+		} finally {
+			session.close();
+		}
+	}
+	
+
 	private String hashPassword(String unhashedPassword) {
 		String salt1 =  "$4J", salt2 = "M%a";
 		return DigestUtils.sha256Hex(salt1 + unhashedPassword + salt2);
 	}
 	
-	private boolean isUserEmail(Session session, String email) {
+	private User isUserEmail(Session session, String email) {
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<User> cr = cb.createQuery(User.class);
 		Root<User> root = cr.from(User.class);
@@ -81,12 +106,11 @@ public class UserDAO {
 		Query<User> query = session.createQuery(cr);
 		List<User> result = query.getResultList();
 		for(User u : result) {
-			System.out.println("User: " + u);
 			if(u.getEmail().equals(email)) {
-				return true;
+				return u;
 			}
 		}
-		return false;
+		return null;
 	}
 }
 	

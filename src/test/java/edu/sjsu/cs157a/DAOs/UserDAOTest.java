@@ -1,7 +1,5 @@
 package edu.sjsu.cs157a.DAOs;
 
-import static org.junit.Assert.*;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -16,9 +14,8 @@ import org.apache.ibatis.jdbc.ScriptRunner;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
+
 
 import edu.sjsu.cs157a.DAOs.UserDAO;
 import edu.sjsu.cs157a.models.User;
@@ -54,14 +51,23 @@ public class UserDAOTest {
 		userDAO.getUser("JJWatt@gmail.com", "pass123");
 	}
 	
+	@Test(expected = AuthenticationException.class)
+	public void getUserThatDoesExistButWrongPasswordTest() throws AuthenticationException {
+		userDAO.getUser("rileychetwood@gmail.com", "pass");
+	}
+	
 	@Test
-	public void getUserThatDoesExistTest()  {
-		try {
-			User user = userDAO.getUser("rc@gmail.com", "pass123");
-			assert user.getEmail().equals("rc@gmail.com");
-		} catch (AuthenticationException e) {
-			e.printStackTrace();
-		}
+	public void getUserThatHasCorrectEmailAndPasswordTest() throws AuthenticationException {
+		User user = userDAO.getUser("rileychetwood@gmail.com", "pass123");
+		assert user.getEmail().equals("rileychetwood@gmail.com");
+	}
+	
+	@Test(expected = AuthenticationException.class)
+	public void removeUserTest() throws AuthenticationException {
+		User ron = new User("Ron", "Weasley", "rw@gmail.com", "ISolemnlySwear", Date.valueOf("1980-03-01"), false);
+		Integer ronUId = userDAO.addUser(ron);
+		userDAO.removeUser(ronUId);
+		userDAO.getUser("rw@gmail.com", "ISolemnlySwear");
 	}
 	
 	public static void executeSQLScript(Connection conn, String fileName) throws Exception {
