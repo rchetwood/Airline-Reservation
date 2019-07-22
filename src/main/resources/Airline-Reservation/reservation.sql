@@ -39,22 +39,22 @@ CREATE TABLE Plane (
 
 DROP TABLE IF EXISTS Fleet;
 CREATE TABLE Fleet (
+	internalID INT AUTO_INCREMENT,
 	alID INT,
 	pID INT,
-	numberInFleet SMALLINT NOT NULL DEFAULT 0,
 	FOREIGN KEY (alID) REFERENCES Airline(alID) ON DELETE CASCADE, 
 	FOREIGN KEY (pID) REFERENCES Plane(pID) ON DELETE CASCADE,
-	PRIMARY KEY (alID, pID)
+	PRIMARY KEY (internalID)
 );
 
-DROP TALBE IF EXIST Country;
+DROP TABLE IF EXISTS Country;
 CREATE TABLE Country (
 	name VARCHAR(100) NOT NULL,
 	alphaTwoCode CHAR(2) NOT NULL UNIQUE,
 	PRIMARY KEY (name)
 );
 
-DROP TALBE IF EXISTS Airport;
+DROP TABLE IF EXISTS Airport;
 CREATE TABLE Airport (
 	apID INT AUTO_INCREMENT,
 	name VARCHAR(100) NOT NULL,
@@ -74,6 +74,58 @@ CREATE TABLE Airport (
 	PRIMARY KEY (apID)
 );
 
+DROP TABLE IF EXISTS FlightPath;
+CREATE TABLE FlightPath (
+	fpID INT AUTO_INCREMENT,
+	departure INT NOT NULL,
+	destination INT NOT NULL,
+	CHECK(departure <> destination),
+	FOREIGN KEY (departure) REFERENCES Airport(apID) ON DELETE CASCADE,
+	FOREIGN KEY (departure) REFERENCES Airport(apID) ON DELETE CASCADE,
+	PRIMARY KEY (fpID)
+);
+
+DROP TABLE IF EXISTS Flight;
+CREATE TABLE Flight (
+	fID INT AUTO_INCREMENT,
+	alID INT,
+	internalID INT, 
+	fpID INT,
+	duration INT,
+	departureDate DATE NOT NULL,
+	seatsAvailable SMALLINT NOT NULL,
+	updatedOn timestamp not null on update current_timestamp,
+	FOREIGN KEY (alID) REFERENCES Airline(alID) ON DELETE CASCADE,
+	FOREIGN KEY (internalID) REFERENCES Fleet(internalID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (fpID) REFERENCES FlightPath(fpID) ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY (fID)
+);
+
+DROP TABLE IF EXISTS ArchivedFlight;
+CREATE TABLE ArchivedFlight (
+	fID INT AUTO_INCREMENT,
+	alID INT,
+	internalID INT, 
+	fpID INT,
+	duration INT,
+	departureDate DATE NOT NULL,
+	seatsAvailable SMALLINT NOT NULL,
+	updatedOn timestamp not null on update current_timestamp,
+	FOREIGN KEY (alID) REFERENCES Airline(alID) ON DELETE CASCADE,
+	FOREIGN KEY (internalID) REFERENCES Fleet(internalID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (fpID) REFERENCES FlightPath(fpID) ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY (fID)
+);
+
+DROP TABLE IF EXISTS Trip;
+CREATE TABLE Trip (
+	uID INT,
+	fID INT,
+	FOREIGN KEY (uID) REFERENCES User(uID) ON DELETE CASCADE,
+	FOREIGN KEY (fID) REFERENCES Flight(fID) ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY (uID, fID)
+);
+
 ---------------------TRIGGERS-------------------------
 
 DROP TRIGGER IF EXISTS userAgeTrigger;
@@ -81,6 +133,7 @@ CREATE TRIGGER userAgeTrigger
 BEFORE INSERT ON User
 FOR EACH ROW
 SET NEW.age = CURRENT_DATE - NEW.birthDate; 
+
 
 ---------------------PROCEDURES-------------------------
 
@@ -103,18 +156,24 @@ INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Spirit Airlines", 
 INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Sun Country Airlines", "SCX", "St. Paul", "1982-01-01");
 INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("United Airlines", "UAL", "Chicago", "1926-01-01");
 
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Airbus", "A220", 141);
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Airbus", "A320", 206);
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Airbus", "A330", 287);
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Airbus", "A350", 366);
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Airbus", "A380", 544);
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Boeing", "737 NG", 188);
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Boeing", "737 MAX", 188);
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Boeing", "747-8", 410);
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Boeing", "777", 400);
-INSERT INTO Plane (manufacturer, model, capacity) VALUES ("Boeing", "787", 330);
+-- HAVE TO CHANGE THIS TO MATCH CORRECT PATH
+-- ALL AIRPORT DATA WAS FOUND AT https://openflights.org/data.html
 
-LOAD DATA INFILE 'C:\\Users\\riley\\OneDrive\\Desktop\\CS157AFinalProject\\cs157aFinal\\src\\main\\resources\\Airline-Reservation\\plane.txt' into table plane;
-LOAD DATA INFILE 'C:\\Users\\riley\\OneDrive\\Desktop\\CS157AFinalProject\\cs157aFinal\\src\\main\\resources\\Airline-Reservation\\country.txt' into table country;
-LOAD DATA INFILE 'C:\\Users\\riley\\OneDrive\\Desktop\\CS157AFinalProject\\cs157aFinal\\src\\main\\resources\\Airline-Reservation\\airport.txt' into table airport;
+
+--BAD SOLUTION D:
+--RILEY'S DESKTOP
+LOAD DATA INFILE 'C:\\Users\\riley\\Desktop\\cs157aProject\\final\\src\\main\\resources\\Airline-Reservation\\plane.txt' into table plane;
+LOAD DATA INFILE 'C:\\Users\\riley\\Desktop\\cs157aProject\\final\\src\\main\\resources\\Airline-Reservation\\country.txt' into table country;
+LOAD DATA INFILE 'C:\\Users\\riley\\Desktop\\cs157aProject\\final\\src\\main\\resources\\Airline-Reservation\\airport.txt' into table airport;
+
+-- RILEY'S LAPTOP
+--LOAD DATA INFILE 'C:\\Users\\riley\\OneDrive\\Desktop\\CS157AFinalProject\\cs157aFinal\\src\\main\\resources\\Airline-Reservation\\plane.txt' into table plane;
+--LOAD DATA INFILE 'C:\\Users\\riley\\OneDrive\\Desktop\\CS157AFinalProject\\cs157aFinal\\src\\main\\resources\\Airline-Reservation\\country.txt' into table country;
+--LOAD DATA INFILE 'C:\\Users\\riley\\OneDrive\\Desktop\\CS157AFinalProject\\cs157aFinal\\src\\main\\resources\\Airline-Reservation\\airport.txt' into table airport;
+
+INSERT INTO FlightPath (departure, destination) 
+SELECT * 
+FROM (SELECT apID FROM Airport WHERE country='United States' GROUP BY tz) A1 JOIN 
+(SELECT apID FROM Airport WHERE country='United States' GROUP BY tz) A2 
+WHERE A1.apID <> A2.apID; 
 
