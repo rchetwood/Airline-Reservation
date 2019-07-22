@@ -3,6 +3,7 @@ CREATE DATABASE dev_airline_reservation;
 
 USE dev_airline_reservation; 
 
+
 ---------------------TABLES-------------------------
 
 DROP TABLE IF EXISTS User;
@@ -93,6 +94,7 @@ CREATE TABLE Flight (
 	fpID INT,
 	duration INT,
 	departureDate DATE NOT NULL,
+	price INT NOT NULL CHECK(price > 0),
 	seatsAvailable SMALLINT NOT NULL,
 	updatedOn timestamp not null on update current_timestamp,
 	FOREIGN KEY (alID) REFERENCES Airline(alID) ON DELETE CASCADE,
@@ -109,6 +111,7 @@ CREATE TABLE ArchivedFlight (
 	fpID INT,
 	duration INT,
 	departureDate DATE NOT NULL,
+	price INT NOT NULL CHECK(price > 0),
 	seatsAvailable SMALLINT NOT NULL,
 	updatedOn timestamp not null on update current_timestamp,
 	FOREIGN KEY (alID) REFERENCES Airline(alID) ON DELETE CASCADE,
@@ -126,6 +129,7 @@ CREATE TABLE Trip (
 	PRIMARY KEY (uID, fID)
 );
 
+
 ---------------------TRIGGERS-------------------------
 
 DROP TRIGGER IF EXISTS userAgeTrigger;
@@ -136,6 +140,7 @@ SET NEW.age = CURRENT_DATE - NEW.birthDate;
 
 
 ---------------------PROCEDURES-------------------------
+
 
 ---------------------INSERTS-------------------------
 
@@ -159,8 +164,8 @@ INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("United Airlines", 
 -- HAVE TO CHANGE THIS TO MATCH CORRECT PATH
 -- ALL AIRPORT DATA WAS FOUND AT https://openflights.org/data.html
 
+--BAD SOLUTION D: NEED TO FIND WAY TO DO RELATIVE PATH
 
---BAD SOLUTION D:
 --RILEY'S DESKTOP
 LOAD DATA INFILE 'C:\\Users\\riley\\Desktop\\cs157aProject\\final\\src\\main\\resources\\Airline-Reservation\\plane.txt' into table plane;
 LOAD DATA INFILE 'C:\\Users\\riley\\Desktop\\cs157aProject\\final\\src\\main\\resources\\Airline-Reservation\\country.txt' into table country;

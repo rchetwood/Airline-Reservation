@@ -67,7 +67,8 @@ public class UserDAOTest {
 		User ron = new User("Ron", "Weasley", "rw@gmail.com", "ISolemnlySwear", Date.valueOf("1980-03-01"), false);
 		Integer ronUId = userDAO.addUser(ron);
 		userDAO.removeUser(ronUId);
-		userDAO.getUser("rw@gmail.com", "ISolemnlySwear");
+		User deletedUser = userDAO.getUser("rw@gmail.com", "ISolemnlySwear");
+		assert deletedUser == null;
 	}
 	
 	public static void executeSQLScript(Connection conn, String fileName) throws Exception {
