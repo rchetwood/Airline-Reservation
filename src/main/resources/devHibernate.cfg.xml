@@ -14,18 +14,6 @@
 			com.mysql.cj.jdbc.Driver
 		</property>
 
-		<!-- DB Credentials -->
-
-		<property name="hibernate.connection.url">
-			jdbc:mysql://127.0.0.1:3306/dev_airline_reservation
-		</property>
-
-		<property name="hibernate.connection.username">
-			root
-		</property>
-
-		<property name="hibernate.connection.password"></property>
-
 		<!-- List of XML mapping files -->
 		<mapping resource="User.hbm.xml" />
 

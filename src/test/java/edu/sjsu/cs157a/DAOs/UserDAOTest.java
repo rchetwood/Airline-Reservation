@@ -2,11 +2,13 @@ package edu.sjsu.cs157a.DAOs;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
+import java.util.Properties;
 
 import javax.security.sasl.AuthenticationException;
 
@@ -24,12 +26,16 @@ public class UserDAOTest {
 	
 	private static UserDAO userDAO;
 	private static Connection conn;
+	private static Properties prop;
 	
 	@BeforeClass
 	public static void init() {
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/dev_airline_reservation", "root", "");
+			prop = new Properties();
+			prop.load(new FileInputStream("src/main/resources/hibernate.properties"));
+			conn = DriverManager.getConnection(prop.getProperty("hibernate.connection.url"),
+											   prop.getProperty("hibernate.connection.username"),
+											   prop.getProperty("hibernate.connection.password"));
 			executeSQLScript(conn, "reservation.sql");
 			
 			userDAO = new UserDAO();
@@ -73,18 +79,13 @@ public class UserDAOTest {
 	
 	public static void executeSQLScript(Connection conn, String fileName) throws Exception {
 		final String basePath = new File("").getAbsolutePath();
-		final String projectPath = "\\src\\main\\resources\\Airline-Reservation\\";
+		final String projectPath = prop.getProperty("projectPath");
 		final String aSQLScriptFilePath = basePath + projectPath + fileName;
 		ScriptRunner sr = null;
 
 		try {
-			// Initialize object for ScripRunner
 			sr = new ScriptRunner(conn);
-
-			// Give the input file to Reader
 			Reader reader = new BufferedReader(new FileReader(aSQLScriptFilePath));
-
-			// Execute script
 			sr.runScript(reader);
 		} catch (Exception e) {
 			throw e;
