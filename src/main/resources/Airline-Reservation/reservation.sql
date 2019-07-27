@@ -182,3 +182,7 @@ FROM (SELECT apID FROM Airport WHERE country='United States' GROUP BY tz) A1 JOI
 (SELECT apID FROM Airport WHERE country='United States' GROUP BY tz) A2 
 WHERE A1.apID <> A2.apID; 
 
+INSERT INTO Fleet (alID, pID) 
+SELECT alID, pID 
+FROM Airline JOIN Plane 
+WHERE RAND()>0.65;
