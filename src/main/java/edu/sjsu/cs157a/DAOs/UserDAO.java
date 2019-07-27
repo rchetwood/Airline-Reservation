@@ -42,6 +42,7 @@ public class UserDAO {
 		} catch (HibernateException e) {
 			if (tx != null)
 				tx.rollback();
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} finally {
 			session.close();
@@ -67,6 +68,8 @@ public class UserDAO {
 		} catch (HibernateException e) {
 			if (tx != null)
 				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			session.close();
 		}
@@ -87,6 +90,8 @@ public class UserDAO {
 		} catch (HibernateException e) {
 			if (tx != null)
 				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			session.close();
 		}

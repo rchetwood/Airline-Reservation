@@ -22,7 +22,7 @@ CREATE TABLE User (
 DROP TABLE IF EXISTS Airline;
 CREATE TABLE Airline (
 	alID INT AUTO_INCREMENT,
-	companyName VARCHAR(50) NOT NULL,
+	companyName VARCHAR(50) NOT NULL UNIQUE,
 	hq VARCHAR(50) NOT NULL,
 	founded DATE NOT NULL,
 	icao CHAR(3) NOT NULL UNIQUE,
@@ -164,17 +164,12 @@ INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("United Airlines", 
 -- HAVE TO CHANGE THIS TO MATCH CORRECT PATH
 -- ALL AIRPORT DATA WAS FOUND AT https://openflights.org/data.html
 
---BAD SOLUTION D: NEED TO FIND WAY TO DO RELATIVE PATH
-
---RILEY'S DESKTOP
-LOAD DATA INFILE 'C:\\Users\\riley\\Desktop\\cs157aProject\\final\\src\\main\\resources\\Airline-Reservation\\plane.txt' into table plane;
-LOAD DATA INFILE 'C:\\Users\\riley\\Desktop\\cs157aProject\\final\\src\\main\\resources\\Airline-Reservation\\country.txt' into table country;
-LOAD DATA INFILE 'C:\\Users\\riley\\Desktop\\cs157aProject\\final\\src\\main\\resources\\Airline-Reservation\\airport.txt' into table airport;
-
--- RILEY'S LAPTOP
---LOAD DATA INFILE 'C:\\Users\\riley\\OneDrive\\Desktop\\CS157AFinalProject\\cs157aFinal\\src\\main\\resources\\Airline-Reservation\\plane.txt' into table plane;
---LOAD DATA INFILE 'C:\\Users\\riley\\OneDrive\\Desktop\\CS157AFinalProject\\cs157aFinal\\src\\main\\resources\\Airline-Reservation\\country.txt' into table country;
---LOAD DATA INFILE 'C:\\Users\\riley\\OneDrive\\Desktop\\CS157AFinalProject\\cs157aFinal\\src\\main\\resources\\Airline-Reservation\\airport.txt' into table airport;
+-- the text files need to be in a datadir defined in mysqls my.cfg
+-- said directory can be found using the following command: 
+-- SHOW VARIABLES WHERE Variable_Name LIKE "%dir";
+LOAD DATA INFILE 'plane.txt' into table plane;
+LOAD DATA INFILE 'country.txt' into table country;
+LOAD DATA INFILE 'airport.txt' into table airport;
 
 INSERT INTO FlightPath (departure, destination) 
 SELECT * 
@@ -182,7 +177,8 @@ FROM (SELECT apID FROM Airport WHERE country='United States' GROUP BY tz) A1 JOI
 (SELECT apID FROM Airport WHERE country='United States' GROUP BY tz) A2 
 WHERE A1.apID <> A2.apID; 
 
-INSERT INTO Fleet (alID, pID) 
-SELECT alID, pID 
-FROM Airline JOIN Plane 
-WHERE RAND()>0.65;
+INSERT INTO Fleet (alID, pID)
+SELECT AL.alID, P1.pID 
+FROM airline AL JOIN plane P1 JOIN plane P2 
+where rand() < 0.4;
+

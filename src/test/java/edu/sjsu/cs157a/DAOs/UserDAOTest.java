@@ -1,12 +1,6 @@
 package edu.sjsu.cs157a.DAOs;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.DriverManager;
 
 import javax.security.sasl.AuthenticationException;
 
@@ -20,18 +14,14 @@ import org.junit.Test;
 import edu.sjsu.cs157a.DAOs.UserDAO;
 import edu.sjsu.cs157a.models.User;
 
-public class UserDAOTest {
+public class UserDAOTest extends BaseTest {
 	
 	private static UserDAO userDAO;
-	private static Connection conn;
 	
 	@BeforeClass
 	public static void init() {
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/dev_airline_reservation", "root", "");
-			executeSQLScript(conn, "reservation.sql");
-			
+			initConnectionAndDatabase();
 			userDAO = new UserDAO();
 			userDAO.setSessionFactory(new Configuration().configure("devHibernate.cfg.xml").buildSessionFactory());
 		} catch (Exception e) {
@@ -71,23 +61,4 @@ public class UserDAOTest {
 		assert deletedUser == null;
 	}
 	
-	public static void executeSQLScript(Connection conn, String fileName) throws Exception {
-		final String basePath = new File("").getAbsolutePath();
-		final String projectPath = "\\src\\main\\resources\\Airline-Reservation\\";
-		final String aSQLScriptFilePath = basePath + projectPath + fileName;
-		ScriptRunner sr = null;
-
-		try {
-			// Initialize object for ScripRunner
-			sr = new ScriptRunner(conn);
-
-			// Give the input file to Reader
-			Reader reader = new BufferedReader(new FileReader(aSQLScriptFilePath));
-
-			// Execute script
-			sr.runScript(reader);
-		} catch (Exception e) {
-			throw e;
-		}
-	}
 }
