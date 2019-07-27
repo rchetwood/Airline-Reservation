@@ -2,11 +2,11 @@ package edu.sjsu.cs157a.models;
 
 import java.sql.Date;
 
+import org.hibernate.annotations.Entity;
+
 public class User {
 	
 	public User() { } 
-
-	
 
 	public User(String fname, String lname, String email, String password, Date birthDate, Boolean isAdmin) {
 		super();
