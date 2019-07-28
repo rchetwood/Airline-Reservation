@@ -43,7 +43,6 @@ CREATE TABLE Fleet (
 	internalID INT AUTO_INCREMENT,
 	alID INT,
 	pID INT,
-	FOREIGN KEY (alID) REFERENCES Airline(alID) ON DELETE CASCADE, 
 	FOREIGN KEY (pID) REFERENCES Plane(pID) ON DELETE CASCADE,
 	PRIMARY KEY (internalID)
 );
@@ -89,7 +88,6 @@ CREATE TABLE FlightPath (
 DROP TABLE IF EXISTS Flight;
 CREATE TABLE Flight (
 	fID INT AUTO_INCREMENT,
-	alID INT,
 	internalID INT, 
 	fpID INT,
 	duration INT,
@@ -97,7 +95,6 @@ CREATE TABLE Flight (
 	price INT NOT NULL CHECK(price > 0),
 	seatsAvailable SMALLINT NOT NULL,
 	updatedOn timestamp not null on update current_timestamp,
-	FOREIGN KEY (alID) REFERENCES Airline(alID) ON DELETE CASCADE,
 	FOREIGN KEY (internalID) REFERENCES Fleet(internalID) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fpID) REFERENCES FlightPath(fpID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (fID)
@@ -106,7 +103,6 @@ CREATE TABLE Flight (
 DROP TABLE IF EXISTS ArchivedFlight;
 CREATE TABLE ArchivedFlight (
 	fID INT AUTO_INCREMENT,
-	alID INT,
 	internalID INT, 
 	fpID INT,
 	duration INT,
@@ -114,7 +110,6 @@ CREATE TABLE ArchivedFlight (
 	price INT NOT NULL CHECK(price > 0),
 	seatsAvailable SMALLINT NOT NULL,
 	updatedOn timestamp not null on update current_timestamp,
-	FOREIGN KEY (alID) REFERENCES Airline(alID) ON DELETE CASCADE,
 	FOREIGN KEY (internalID) REFERENCES Fleet(internalID) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fpID) REFERENCES FlightPath(fpID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (fID)

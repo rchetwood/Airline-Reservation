@@ -27,7 +27,7 @@ public class AirlineDAOTest extends BaseTest {
 		}
 	}
 	
-	@Test
+
 	public void addAirlineTest() {
 		Integer alID = airlineDAO.addAirline(getTestAirline());
 		assert alID != null;
