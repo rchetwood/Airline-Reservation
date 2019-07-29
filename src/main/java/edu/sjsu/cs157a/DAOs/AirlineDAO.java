@@ -1,9 +1,6 @@
 package edu.sjsu.cs157a.DAOs;
 
-import java.util.Set;
-
-import javax.security.sasl.AuthenticationException;
-
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.NaturalIdLoadAccess;
 import org.hibernate.Session;
@@ -47,6 +44,42 @@ public class AirlineDAO {
 		return alID;
 	}
 	
+	public Integer addPlaneToFleet(String companyName, String manufacturer, String model) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		Plane p = null;
+		Airline airline = null;
+		
+		try {
+			tx = session.beginTransaction();
+			// get plane 
+			NaturalIdLoadAccess<Plane> naturalPlaneIdentifier = session.byNaturalId(Plane.class);
+			naturalPlaneIdentifier.using("manufacturer", manufacturer);
+			naturalPlaneIdentifier.using("model", model);
+			p = (Plane)naturalPlaneIdentifier.load();
+			
+			// get airline 
+			NaturalIdLoadAccess<Airline> naturalAirlineIdentifier = session.byNaturalId(Airline.class);
+			naturalAirlineIdentifier.using("companyName", companyName);
+			airline = (Airline)naturalAirlineIdentifier.load();
+			
+			// add to fleet
+			airline.addToFleet(p);
+			logger.info(p + " has been add to " + airline.getCompanyName());
+			
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		
+		return p == null ? null : p.getpID();
+	}
+	
 	public Airline getAirline(String companyName) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
@@ -57,7 +90,8 @@ public class AirlineDAO {
 			NaturalIdLoadAccess<Airline> naturalIdentifier = session.byNaturalId(Airline.class);
 			naturalIdentifier.using("companyName", companyName);
 			airline = (Airline)naturalIdentifier.load();
-			logger.info(airline + " has been retrieved.");
+			Hibernate.initialize(airline.getFleet());
+			logger.info(airline.getCompanyName() + " has been retrieved.");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -70,6 +104,5 @@ public class AirlineDAO {
 		
 		return airline;
 	}
-	
 
 }
