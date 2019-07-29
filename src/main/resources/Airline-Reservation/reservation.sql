@@ -92,9 +92,10 @@ CREATE TABLE Flight (
 	fpID INT,
 	duration INT,
 	departureDate DATE NOT NULL,
-	price INT NOT NULL CHECK(price > 0),
-	seatsAvailable SMALLINT NOT NULL,
+	price INT,
+	seatsAvailable SMALLINT NOT NULL DEFAULT 141,
 	updatedOn timestamp not null on update current_timestamp,
+	UNIQUE(internalID, fpID, departureDate),
 	FOREIGN KEY (internalID) REFERENCES Fleet(internalID) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fpID) REFERENCES FlightPath(fpID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (fID)
@@ -107,9 +108,10 @@ CREATE TABLE ArchivedFlight (
 	fpID INT,
 	duration INT,
 	departureDate DATE NOT NULL,
-	price INT NOT NULL CHECK(price > 0),
-	seatsAvailable SMALLINT NOT NULL,
+	price INT,
+	seatsAvailable SMALLINT NOT NULL DEFAULT 141,
 	updatedOn timestamp not null on update current_timestamp,
+	UNIQUE(internalID, fpID, departureDate),
 	FOREIGN KEY (internalID) REFERENCES Fleet(internalID) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fpID) REFERENCES FlightPath(fpID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (fID)
@@ -132,6 +134,12 @@ CREATE TRIGGER userAgeTrigger
 BEFORE INSERT ON User
 FOR EACH ROW
 SET NEW.age = CURRENT_DATE - NEW.birthDate; 
+
+DROP TRIGGER if EXISTS randomFlightDurationTrigger;
+CREATE TRIGGER randomFlightDurationTrigger
+BEFORE INSERT ON Flight
+FOR EACH ROW
+SET NEW.duration = Rand()*(18000-3600)+3600, NEW.price = Rand()*(50000-7000)+7000;
 
 
 ---------------------PROCEDURES-------------------------
@@ -176,4 +184,14 @@ INSERT INTO Fleet (alID, pID)
 SELECT AL.alID, P1.pID 
 FROM airline AL JOIN plane P1 JOIN plane P2 
 where rand() < 0.4;
+
+INSERT INTO Flight (internalID, fpID, departureDate) 
+SELECT F.internalID, FP.fpID, D.departureDate 
+FROM (SELECT internalID FROM Fleet) F, (SELECT fpID FROM FlightPath) FP, (SELECT '2019-08-05' departureDate) D 
+WHERE Rand() > 0.999;
+
+ INSERT INTO Trip 
+ SELECT U.uID, (Rand()*(MAX(F.fID)-MIN(F.fID))+MIN(F.fID)) 
+ FROM (SELECT uID FROM User) U, (SELECT fID FROM Flight) F 
+ GROUP BY uID;
 

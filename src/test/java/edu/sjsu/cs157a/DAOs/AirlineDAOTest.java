@@ -8,6 +8,8 @@ import java.util.HashSet;
 import org.hibernate.cfg.Configuration;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.sjsu.cs157a.models.Airline;
 import edu.sjsu.cs157a.models.Plane;
@@ -27,7 +29,7 @@ public class AirlineDAOTest extends BaseTest {
 		}
 	}
 	
-
+	@Test
 	public void addAirlineTest() {
 		Integer alID = airlineDAO.addAirline(getTestAirline());
 		assert alID != null;
@@ -37,6 +39,19 @@ public class AirlineDAOTest extends BaseTest {
 	public void getAirlineTest() {
 		Airline airline = airlineDAO.getAirline("Delta Airlines");
 		assert airline.getCompanyName().equals("Delta Airlines");
+	}
+	
+	@Test
+	public void getToFleetTest() {
+		Airline delta = airlineDAO.getAirline("Delta Airlines");
+		int oldCount = delta.getFleet().size();
+		System.out.println("count before update: " + oldCount);
+		airlineDAO.addPlaneToFleet("Delta Airlines", "Boeing", "777");
+		delta = airlineDAO.getAirline("Delta Airlines");
+		int newCount = delta.getFleet().size();
+		System.out.println("count after update: " + newCount);
+		
+		assert newCount == oldCount + 1;
 	}
 	
 	private Airline getTestAirline() {
@@ -51,7 +66,7 @@ public class AirlineDAOTest extends BaseTest {
 		fleet.add(p3);
 		fleet.add(p4);
 		
-		return new Airline("Riley's Airline", "San Jose", Date.valueOf("1993-07-02"), "RTC", fleet);
+		return new Airline("Riley's Airline", "San Jose", Date.valueOf("1993-07-02"), "RTC");
 	}
 
 }

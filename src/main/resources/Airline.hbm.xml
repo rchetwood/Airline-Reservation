@@ -18,12 +18,10 @@
 			<property name="companyName" column="companyName" type="string" />
 		</natural-id>
 
-		<set name="fleet" table="fleet" cascade="save-update" lazy="true"
-			fetch="select">
+		<bag name="fleet" table="fleet" cascade="save-update" lazy="true" fetch="select">
 			<key column="alID" />
-			<many-to-many column="pid"
-				class="edu.sjsu.cs157a.models.Plane" />
-		</set>
+			<many-to-many column="pid" class="edu.sjsu.cs157a.models.Plane" />
+		</bag>
 
 		<property name="hq" column="hq" type="string" />
 		<property name="founded" column="founded" type="date" />

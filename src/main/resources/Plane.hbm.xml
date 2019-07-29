@@ -13,8 +13,11 @@
 			<generator class="increment"></generator>  
 		</id>
 		
-		<property name="manufacturer" column="manufacturer" type="string"/>
-		<property name="model" column="model" type="string"/>
+		<natural-id>
+			<property name="manufacturer" column="manufacturer" type="string"/>
+			<property name="model" column="model" type="string"/>
+		</natural-id>
+		
 		<property name="capacity" column="capacity" type="int"/>
 	
 	</class>

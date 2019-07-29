@@ -1,15 +1,13 @@
 package edu.sjsu.cs157a.models;
 
 import java.sql.Date;
-import java.util.Set;
-
-import org.hibernate.annotations.NaturalId;
+import java.util.List;
 
 public class Airline {
 	
 	public Airline() {}
 
-	public Airline(String companyName, String hq, Date founded, String icao, Set<Plane> fleet) {
+	public Airline(String companyName, String hq, Date founded, String icao) {
 		super();
 		this.companyName = companyName;
 		this.hq = hq;
@@ -58,12 +56,16 @@ public class Airline {
 		this.icao = icao;
 	}
 
-	public Set<Plane> getFleet() {
+	public List<Plane> getFleet() {
 		return fleet;
 	}
 
-	public void setFleet(Set<Plane> fleet) {
+	public void setFleet(List<Plane> fleet) {
 		this.fleet = fleet;
+	}
+	
+	public void addToFleet(Plane p) { 
+		fleet.add(p);
 	}
 
 	@Override
@@ -99,11 +101,9 @@ public class Airline {
 	}
 
 	private Integer alID;
-	
-	@NaturalId
 	private String companyName;
 	private String hq;
 	private Date founded;
 	private String icao;
-	private Set<Plane> fleet;
+	private List<Plane> fleet;
 }
