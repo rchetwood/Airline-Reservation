@@ -80,6 +80,29 @@ public class AirlineDAO {
 		return p == null ? null : p.getpID();
 	}
 	
+	public Airline getAirline(Integer alID) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		Airline airline = null;
+		
+		try {
+			tx = session.beginTransaction();
+			airline = (Airline) session.get(Airline.class, alID);
+			Hibernate.initialize(airline.getFleet());
+			logger.info(airline.getCompanyName() + " has been retrieved.");
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		
+		return airline;
+	}
+	
 	public Airline getAirline(String companyName) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
@@ -104,5 +127,5 @@ public class AirlineDAO {
 		
 		return airline;
 	}
-
+	
 }
