@@ -75,46 +75,40 @@ CREATE TABLE Airport (
 	PRIMARY KEY (apID)
 );
 
-DROP TABLE IF EXISTS FlightPath;
-CREATE TABLE FlightPath (
-	fpID INT AUTO_INCREMENT,
+
+DROP TABLE IF EXISTS Flight;
+CREATE TABLE Flight (
+	fID INT AUTO_INCREMENT,
+	internalID INT, 
 	departure INT NOT NULL,
 	destination INT NOT NULL,
-	CHECK(departure <> destination),
+	duration INT,
+	departureDate DATE NOT NULL,
+	price INT,
+	seatsAvailable SMALLINT NOT NULL DEFAULT 141,
+	updatedOn timestamp not null on update current_timestamp,
+	UNIQUE(internalID, departure, destination, departureDate),
+	FOREIGN KEY (internalID) REFERENCES Fleet(internalID) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (departure) REFERENCES Airport(apID) ON DELETE CASCADE,
-	FOREIGN KEY (departure) REFERENCES Airport(apID) ON DELETE CASCADE,
-	PRIMARY KEY (fpID)
+	FOREIGN KEY (destination) REFERENCES Airport(apID) ON DELETE CASCADE,
+	PRIMARY KEY (fID)
 );
 
 DROP TABLE IF EXISTS Flight;
 CREATE TABLE Flight (
 	fID INT AUTO_INCREMENT,
 	internalID INT, 
-	fpID INT,
+	departure INT NOT NULL,
+	destination INT NOT NULL,
 	duration INT,
 	departureDate DATE NOT NULL,
 	price INT,
 	seatsAvailable SMALLINT NOT NULL DEFAULT 141,
 	updatedOn timestamp not null on update current_timestamp,
-	UNIQUE(internalID, fpID, departureDate),
+	UNIQUE(internalID, departure, destination, departureDate),
 	FOREIGN KEY (internalID) REFERENCES Fleet(internalID) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (fpID) REFERENCES FlightPath(fpID) ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY (fID)
-);
-
-DROP TABLE IF EXISTS ArchivedFlight;
-CREATE TABLE ArchivedFlight (
-	fID INT AUTO_INCREMENT,
-	internalID INT, 
-	fpID INT,
-	duration INT,
-	departureDate DATE NOT NULL,
-	price INT,
-	seatsAvailable SMALLINT NOT NULL DEFAULT 141,
-	updatedOn timestamp not null on update current_timestamp,
-	UNIQUE(internalID, fpID, departureDate),
-	FOREIGN KEY (internalID) REFERENCES Fleet(internalID) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (fpID) REFERENCES FlightPath(fpID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (departure) REFERENCES Airport(apID) ON DELETE CASCADE,
+	FOREIGN KEY (destination) REFERENCES Airport(apID) ON DELETE CASCADE,
 	PRIMARY KEY (fID)
 );
 
@@ -148,22 +142,6 @@ SET NEW.duration = Rand()*(18000-3600)+3600, NEW.price = Rand()*(50000-7000)+700
 
 ---------------------INSERTS-------------------------
 
-INSERT INTO USER (fname, lname, email, password, birthDate, isAdmin) VALUES ("Riley", "Chetwood", "rc@gmail.com", "pass123", "1993-7-02", true);
-INSERT INTO USER (fname, lname, email, password, birthDate, isAdmin) VALUES ("Luz", "Hernandez", "lh@gmail.com", "pass321", "1994-06-28", false);
-INSERT INTO USER (fname, lname, email, password, birthDate, isAdmin) VALUES ("Harry", "Potter", "hp@yahoo.com", "YerAWizard", "1980-07-31", false);
-INSERT INTO USER (fname, lname, email, password, birthDate, isAdmin) VALUES ("Frodo", "Baggins", "fb@yahoo.com", "HobbitsToIsengrad", "1929-07-31", false);
-
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Alaska Airlines", "ASA", "Seatle", "1932-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Allegiant Air", "AAY", " Las Vegas", "1997-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("American Airlines", "AAL", "Dallas", "1926-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Delta Airlines", "DAL", "Atlanta", "1924-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Frontier Airlines", "FFT", "Denver", "1994-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Hawaiian Airlines", "HAL", "Honolulu", "1929-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("JetBlue Airways", "JBU", "New York", "1998-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Southwest Airlines", "SWA", "Dallas", "1967-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Spirit Airlines", "NKS", "Fort Lauderdale", "1980-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("Sun Country Airlines", "SCX", "St. Paul", "1982-01-01");
-INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("United Airlines", "UAL", "Chicago", "1926-01-01");
 
 -- HAVE TO CHANGE THIS TO MATCH CORRECT PATH
 -- ALL AIRPORT DATA WAS FOUND AT https://openflights.org/data.html
@@ -171,28 +149,11 @@ INSERT INTO Airline (companyName, icao, hq, founded) VALUES ("United Airlines", 
 -- the text files need to be in a datadir defined in mysqls my.cfg
 -- said directory can be found using the following command: 
 -- SHOW VARIABLES WHERE Variable_Name LIKE "%dir";
+LOAD DATA INFILE 'user.txt' into table user;
 LOAD DATA INFILE 'plane.txt' into table plane;
+LOAD DATA INFILE 'airline.txt' INTO TABLE airline;
 LOAD DATA INFILE 'country.txt' into table country;
 LOAD DATA INFILE 'airport.txt' into table airport;
-
-INSERT INTO FlightPath (departure, destination) 
-SELECT * 
-FROM (SELECT apID FROM Airport WHERE country='United States' GROUP BY tz) A1 JOIN 
-(SELECT apID FROM Airport WHERE country='United States' GROUP BY tz) A2 
-WHERE A1.apID <> A2.apID; 
-
-INSERT INTO Fleet (alID, pID)
-SELECT AL.alID, P1.pID 
-FROM airline AL JOIN plane P1 JOIN plane P2 
-where rand() < 0.4;
-
-INSERT INTO Flight (internalID, fpID, departureDate) 
-SELECT F.internalID, FP.fpID, D.departureDate 
-FROM (SELECT internalID FROM Fleet) F, (SELECT fpID FROM FlightPath) FP, (SELECT '2019-08-05' departureDate) D 
-WHERE Rand() > 0.999;
-
- INSERT INTO Trip 
- SELECT U.uID, (Rand()*(MAX(F.fID)-MIN(F.fID))+MIN(F.fID)) 
- FROM (SELECT uID FROM User) U, (SELECT fID FROM Flight) F 
- GROUP BY uID;
-
+LOAD DATA INFILE 'fleet.txt' into table fleet;
+LOAD DATA INFILE 'flight.txt' INTO TABLE flight (internalID, departure, destination, departureDate);
+LOAD DATA INFILE 'trip.txt' into table trip;
