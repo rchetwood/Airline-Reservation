@@ -44,6 +44,37 @@ public class AirlineDAO {
 		return alID;
 	}
 	
+	public Integer addPlaneToFleet(Integer alID, Integer pID) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		Plane p = null;
+		Airline airline = null;
+		
+		try {
+			tx = session.beginTransaction();
+			// get plane 
+			p = (Plane)session.get(Plane.class, pID);
+			
+			// get airline 
+			airline = (Airline)session.get(Airline.class, pID);
+			
+			// add to fleet
+			airline.addToFleet(p);
+			logger.info(p + " has been add to " + airline.getCompanyName());
+			
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		
+		return p == null ? null : p.getpID();
+	}
+	
 	public Integer addPlaneToFleet(String companyName, String manufacturer, String model) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;

@@ -1,8 +1,7 @@
 package edu.sjsu.cs157a.models;
 
 import java.sql.Date;
-
-import org.hibernate.annotations.Entity;
+import java.util.Set;
 
 public class User {
 	
@@ -81,19 +80,20 @@ public class User {
 
 	public void setIsAdmin(Boolean isAdmin) {
 		this.isAdmin = isAdmin;
+	} 
+	
+	public Set<Flight> getTrips() {
+		return trips;
+	}
+
+	public void setTrips(Set<Flight> trips) {
+		this.trips = trips;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((age == null) ? 0 : age.hashCode());
-		result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((fname == null) ? 0 : fname.hashCode());
-		result = prime * result + ((isAdmin == null) ? 0 : isAdmin.hashCode());
-		result = prime * result + ((lname == null) ? 0 : lname.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((uID == null) ? 0 : uID.hashCode());
 		return result;
 	}
@@ -107,41 +107,6 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		if (age == null) {
-			if (other.age != null)
-				return false;
-		} else if (!age.equals(other.age))
-			return false;
-		if (birthDate == null) {
-			if (other.birthDate != null)
-				return false;
-		} else if (!birthDate.equals(other.birthDate))
-			return false;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (fname == null) {
-			if (other.fname != null)
-				return false;
-		} else if (!fname.equals(other.fname))
-			return false;
-		if (isAdmin == null) {
-			if (other.isAdmin != null)
-				return false;
-		} else if (!isAdmin.equals(other.isAdmin))
-			return false;
-		if (lname == null) {
-			if (other.lname != null)
-				return false;
-		} else if (!lname.equals(other.lname))
-			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.equals(other.password))
-			return false;
 		if (uID == null) {
 			if (other.uID != null)
 				return false;
@@ -153,7 +118,8 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [uID=" + uID + ", fname=" + fname + ", lname=" + lname + ", email=" + email + ", password="
-				+ password + ", birthDate=" + birthDate + ", age=" + age + ", isAdmin=" + isAdmin + "]";
+				+ password + ", birthDate=" + birthDate + ", age=" + age + ", isAdmin=" + isAdmin + ", trips=" + trips
+				+ "]";
 	}
 
 	private Integer uID;
@@ -164,4 +130,5 @@ public class User {
 	private Date birthDate;
 	private Integer age;
 	private Boolean isAdmin;
+	private Set<Flight> trips;
 }

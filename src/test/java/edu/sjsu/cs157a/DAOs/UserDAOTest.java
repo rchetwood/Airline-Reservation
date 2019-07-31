@@ -4,12 +4,9 @@ import java.sql.Date;
 
 import javax.security.sasl.AuthenticationException;
 
-import org.apache.ibatis.jdbc.ScriptRunner;
-import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 import edu.sjsu.cs157a.DAOs.UserDAO;
 import edu.sjsu.cs157a.models.User;
@@ -61,4 +58,13 @@ public class UserDAOTest extends BaseTest {
 		assert deletedUser == null;
 	}
 	
+	@Test
+	public void addTripTest() throws AuthenticationException  {
+		User riley = userDAO.getUser("rc@gmail.com", "pass123");
+		int oldTrips = riley.getTrips().size();
+		userDAO.addTrip(1, 100);
+		riley = userDAO.getUser("rc@gmail.com", "pass123");
+		int newTrips = riley.getTrips().size();
+		assert oldTrips == newTrips - 1;
+	}
 }

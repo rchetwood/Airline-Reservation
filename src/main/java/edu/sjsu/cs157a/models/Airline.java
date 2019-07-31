@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.models;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Airline {
@@ -13,7 +14,6 @@ public class Airline {
 		this.hq = hq;
 		this.founded = founded;
 		this.icao = icao;
-		this.fleet = fleet;
 	}
 
 	public Integer getAlID() {

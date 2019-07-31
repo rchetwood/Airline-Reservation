@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.models;
 
 import java.sql.Date;
+import java.util.Set;
 
 public class Flight {
 
@@ -17,14 +18,13 @@ public class Flight {
 		this.price = price;
 		this.seatsAvailable = seatsAvailable;
 	}
-	
 
-	public Integer getFlID() {
-		return flID;
+	public Integer getfID() {
+		return fID;
 	}
 
-	public void setFlID(Integer flID) {
-		this.flID = flID;
+	public void setfID(Integer fID) {
+		this.fID = fID;
 	}
 
 	public Plane getPlane() {
@@ -83,11 +83,27 @@ public class Flight {
 		this.seatsAvailable = seatsAvailable;
 	}
 
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
+	}
+	
+	public Set<User> getManifest() {
+		return manifest;
+	}
+
+	public void setManifest(Set<User> manifest) {
+		this.manifest = manifest;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((flID == null) ? 0 : flID.hashCode());
+		result = prime * result + ((fID == null) ? 0 : fID.hashCode());
 		return result;
 	}
 
@@ -100,22 +116,22 @@ public class Flight {
 		if (getClass() != obj.getClass())
 			return false;
 		Flight other = (Flight) obj;
-		if (flID == null) {
-			if (other.flID != null)
+		if (fID == null) {
+			if (other.fID != null)
 				return false;
-		} else if (!flID.equals(other.flID))
+		} else if (!fID.equals(other.fID))
 			return false;
 		return true;
 	}
 	
 	@Override
 	public String toString() {
-		return "Flight [flID=" + flID + ", plane=" + plane + ", departure=" + departure + ", destination=" + destination
+		return "Flight [fID=" + fID + ", plane=" + plane + ", departure=" + departure + ", destination=" + destination
 				+ ", duration=" + duration + ", departureDate=" + departureDate + ", price=" + price
-				+ ", seatsAvailable=" + seatsAvailable + "]";
+				+ ", seatsAvailable=" + seatsAvailable + ", updatedOn=" + updatedOn + "]";
 	}
 
-	private Integer flID;
+	private Integer fID;
 	private Plane plane;
 	private Airport departure;
 	private Airport destination;
@@ -123,4 +139,6 @@ public class Flight {
 	private Date departureDate;
 	private Integer price;
 	private Integer seatsAvailable;
+	private Date updatedOn;
+	private Set<User> manifest;
 }
