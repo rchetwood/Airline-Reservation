@@ -73,7 +73,8 @@ public class FlightDAO {
 
 		try {
 			tx = session.beginTransaction();
-			logger.info("Searhing...");
+			logger.info("Searhing with the following criteria...." + departure.getCity() + " " + destination.getCity() + " " +
+						departureDate + " " + sortByPrice);
 
 			CriteriaBuilder cb = session.getCriteriaBuilder();
 			CriteriaQuery<Flight> cr = cb.createQuery(Flight.class);
@@ -88,7 +89,11 @@ public class FlightDAO {
 			
 			flights = session.createQuery(cr).list();
 			for(Flight f : flights) { 
-				Hibernate.initialize(f.toString());
+				logger.info(f + " matches criteria.");
+				Hibernate.initialize(f.getDeparture());
+				Hibernate.initialize(f.getDestination());
+				Hibernate.initialize(f.getAirline());
+				Hibernate.initialize(f.getManifest());
 			}
 			
 			tx.commit();

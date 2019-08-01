@@ -42,7 +42,6 @@ public class FlightDAOTest extends BaseTest {
 		Airport destination = airportDAO.getAirport("Albert Whitted Airport");
 		ArrayList<Flight> searchResults = (ArrayList<Flight>) flightDAO.search(departure, destination, Date.valueOf("2019-08-15"), false);
 		for(Flight f : searchResults) {
-			System.out.println(f);
 			assert f.getDeparture().getName().equals("Hollister Municipal Airport") &&
 			   	   f.getDestination().getName().equals("Albert Whitted Airport") &&
 			   	   f.getDepartureDate().equals( Date.valueOf("2019-08-15"));
@@ -56,7 +55,6 @@ public class FlightDAOTest extends BaseTest {
 		ArrayList<Flight> searchResults = (ArrayList<Flight>) flightDAO.search(departure, destination, Date.valueOf("2019-08-15"), true);
 		
 		for(int i = searchResults.size()-1; i >= 0; i--) {
-			System.out.println(searchResults.get(i));
 			if(searchResults.get(i).getPrice() > searchResults.get(searchResults.size()-1).getPrice()) {
 				fail();
 			}
