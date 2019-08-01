@@ -7,9 +7,10 @@ public class Flight {
 
 	public Flight() {} 
 	
-	public Flight(Plane plane, Airport departure, Airport destination, Integer duration, Date departureDate,
+	public Flight(Airline airline, Plane plane, Airport departure, Airport destination, Integer duration, Date departureDate,
 			Integer price, Integer seatsAvailable) {
 		super();
+		this.airline = airline;
 		this.plane = plane;
 		this.departure = departure;
 		this.destination = destination;
@@ -25,6 +26,14 @@ public class Flight {
 
 	public void setfID(Integer fID) {
 		this.fID = fID;
+	}
+	
+	public Airline getAirline() {
+		return airline;
+	}
+
+	public void setAirline(Airline airline) {
+		this.airline = airline;
 	}
 
 	public Plane getPlane() {
@@ -126,12 +135,14 @@ public class Flight {
 	
 	@Override
 	public String toString() {
-		return "Flight [fID=" + fID + ", plane=" + plane + ", departure=" + departure + ", destination=" + destination
+		return "Flight [fID=" + fID + " airline=" + airline.getCompanyName() + ", plane=" + plane.getManufacturer() + " " 
+				+ plane.getModel() + ", departure=" + departure.getCity() + ", destination=" + destination.getCity()
 				+ ", duration=" + duration + ", departureDate=" + departureDate + ", price=" + price
 				+ ", seatsAvailable=" + seatsAvailable + ", updatedOn=" + updatedOn + "]";
 	}
 
 	private Integer fID;
+	private Airline airline;
 	private Plane plane;
 	private Airport departure;
 	private Airport destination;

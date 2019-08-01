@@ -35,6 +35,11 @@
             <key column="internalID"/>
             <many-to-one name="plane" column="pID" not-null="true"/>
         </join>
+        
+        <join table="fleet" inverse="true">
+            <key column="internalID"/>
+            <many-to-one name="airline" column="alID" not-null="true"/>
+        </join>
 
 
 	</class>
