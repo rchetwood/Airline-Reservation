@@ -17,7 +17,7 @@ public class Flight {
 		this.duration = duration;
 		this.departureDate = departureDate;
 		this.price = price;
-		this.seatsAvailable = seatsAvailable;
+		this.seatsAvailable = plane.getCapacity();
 	}
 
 	public Integer getfID() {
