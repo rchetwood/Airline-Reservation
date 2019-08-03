@@ -19,7 +19,8 @@ public class App {
 		
 		
 		while(true) {
-			if(userAuth(tempUI)) {
+			tempUI = userAuth();
+			if(tempUI!=null) {
 				// logged in user
 				System.out.println("You have just logged in.");
 				System.out.println("What feature would you like to use:");
@@ -133,9 +134,10 @@ public class App {
 		}
 	}
 	
-	static boolean userAuth(User tempUI) {
+	static User userAuth() {
 		boolean isDone = false;
 		String inputHolder = "";
+		User tempUI = null;
 		Scanner scan = new Scanner(System.in);
 		while(!isDone){
 			System.out.println("Do you want to:");
@@ -146,34 +148,9 @@ public class App {
 			// ****************
 			// User Sign in
 			if(Integer.parseInt(inputHolder) == 1){
-				while(true) {
-					// keep trying to log in until user logs in or 
-					// user wants to quite.
-					System.out.println("Please enter your email address: ");
-					inputHolder = scan.nextLine();
-					tempUI.setEmail(inputHolder);
-					System.out.println("Please enter your password: ");
-					inputHolder = scan.nextLine();
-					tempUI.setPassword(inputHolder);
-					
-					// User Has been verified
-					try {
-						if(verifyUser(tempUI)) return true;
-						else {
-							System.out.println("Would you like to try again?");
-							System.out.println("[1] Yes.");
-							System.out.println("[2] No.");
-							inputHolder = scan.nextLine();
-							if(Integer.parseInt(inputHolder) == 2) break;
-						}
-					} catch (AuthenticationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+				UserAuthController uc = new UserAuthController();
+				tempUI = uc.Login();
+				return tempUI;
 			}
 			
 			// *********************
@@ -213,6 +190,7 @@ public class App {
 					}
 					else System.err.println("Invalid Input, try again.");
 				}
+				return tempUI;
 				
 			}
 			else if(Integer.parseInt(inputHolder) == 3){
@@ -229,13 +207,7 @@ public class App {
 			
 		}
 		scan.close();
-		return false;
-	}
-
-	static boolean verifyUser(User tempUI) throws AuthenticationException {
-		UserAuthController uc = new UserAuthController();
-		if(uc.run(tempUI)) return true;
-		else return false;
+		return tempUI;
 	}
 	
 	static void searchFlight() {
