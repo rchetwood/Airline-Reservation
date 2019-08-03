@@ -40,6 +40,7 @@ public class SearchController {
 		
 		System.out.println("========================================");
 		System.out.println(searchResults);
+		in.close();
 	
 	}
 }

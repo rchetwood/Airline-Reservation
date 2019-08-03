@@ -117,8 +117,8 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [uID=" + uID + ", fname=" + fname + ", lname=" + lname + ", email=" + email + ", password="
-				+ password + ", birthDate=" + birthDate + ", age=" + age + ", isAdmin=" + isAdmin + ", trips=" + trips
+		return "User [uID=" + uID + ", \nfname=" + fname + ", \nlname=" + lname + ", \nemail=" + email + ", \npassword="
+				+ password + ", \nbirthDate=" + birthDate + ", \nage=" + age + ", \nisAdmin=" + isAdmin + ", \ntrips=" + trips
 				+ "]";
 	}
 
