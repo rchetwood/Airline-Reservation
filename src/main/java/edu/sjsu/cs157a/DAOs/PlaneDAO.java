@@ -30,7 +30,7 @@ public class PlaneDAO {
 		try {
 			tx = session.beginTransaction();
 			pID = (Integer) session.save(newPlane);
-			logger.info(newPlane + " has been added to Plane with pID=" + pID);
+			logger.debug(newPlane + " has been added to Plane with pID=" + pID);
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -55,7 +55,29 @@ public class PlaneDAO {
 			naturalPlaneIdentifier.using("manufacturer", manufacturer);
 			naturalPlaneIdentifier.using("model", model);
 			p = naturalPlaneIdentifier.load();
-			logger.info("");
+			logger.debug(p + " has been added to the database");
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		
+		return p;
+	}
+	
+	public Plane getPlane(Integer pID) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		Plane p = null;
+		
+		try {
+			tx = session.beginTransaction();
+			p = (Plane) session.get(Plane.class, pID);
+			logger.debug(p + " has been added to the database");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -77,7 +99,7 @@ public class PlaneDAO {
 		try {
 			tx = session.beginTransaction();
 			planes = session.createQuery("FROM Plane").list();
-			logger.info("");
+			logger.debug("All planes have been retrieved from the database");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -100,7 +122,7 @@ public class PlaneDAO {
 			Plane p = session.get(Plane.class, pID);
 			p.setCapacity(capacity);
 			session.update(p);
-			logger.info("");
+			logger.debug(p + " has had its capacity updated to " + capacity);
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -123,6 +145,7 @@ public class PlaneDAO {
 			naturalPlaneIdentifier.using("manufacturer", manufacturer);
 			naturalPlaneIdentifier.using("model", model);
 			Plane p = naturalPlaneIdentifier.load();
+			logger.debug(p + " has been removed from the databse.");
 			session.delete(p);
 			tx.commit();
 		} catch (HibernateException e) {

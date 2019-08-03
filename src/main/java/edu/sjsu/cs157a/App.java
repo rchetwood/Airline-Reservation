@@ -5,11 +5,12 @@ import java.util.Scanner;
 import edu.sjsu.cs157a.models.User;
  
 
+import edu.sjsu.cs157a.controllers.SearchController;
+
 public class App {
 	
 	public static void main(String[] args) {
 		User tempUI = new User();
-		
 		String inputHolder = "";
 		Scanner scan = new Scanner(System.in);
 		
@@ -225,7 +226,8 @@ public class App {
 	}
 	
 	static void searchFlight() {
-		
+		SearchController sc = new SearchController();
+		sc.run();
 	}
 	
 	static void listAllTrips() {
@@ -264,3 +266,4 @@ public class App {
 		
 	}
 }
+

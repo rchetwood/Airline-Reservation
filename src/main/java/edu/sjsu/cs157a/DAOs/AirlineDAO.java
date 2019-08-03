@@ -30,7 +30,7 @@ public class AirlineDAO {
 		try {
 			tx = session.beginTransaction();
 			alID = (Integer) session.save(newAirline);
-			logger.info(newAirline + " has been added with alID of " + alID + ".");
+			logger.debug(newAirline + " has been added with alID of " + alID + ".");
 			tx.commit();
 		} catch(HibernateException e) {
 			if (tx != null)
@@ -42,6 +42,37 @@ public class AirlineDAO {
 		}
 		
 		return alID;
+	}
+	
+	public Integer addPlaneToFleet(Integer alID, Integer pID) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		Plane p = null;
+		Airline airline = null;
+		
+		try {
+			tx = session.beginTransaction();
+			// get plane 
+			p = (Plane)session.get(Plane.class, pID);
+			
+			// get airline 
+			airline = (Airline)session.get(Airline.class, pID);
+			
+			// add to fleet
+			airline.addToFleet(p);
+			logger.debug(p + " has been add to " + airline.getCompanyName());
+			
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		
+		return p == null ? null : p.getpID();
 	}
 	
 	public Integer addPlaneToFleet(String companyName, String manufacturer, String model) {
@@ -65,7 +96,7 @@ public class AirlineDAO {
 			
 			// add to fleet
 			airline.addToFleet(p);
-			logger.info(p + " has been add to " + airline.getCompanyName());
+			logger.debug(p + " has been add to " + airline.getCompanyName());
 			
 			tx.commit();
 		} catch (HibernateException e) {
@@ -80,18 +111,16 @@ public class AirlineDAO {
 		return p == null ? null : p.getpID();
 	}
 	
-	public Airline getAirline(String companyName) {
+	public Airline getAirline(Integer alID) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		Airline airline = null;
 		
 		try {
 			tx = session.beginTransaction();
-			NaturalIdLoadAccess<Airline> naturalIdentifier = session.byNaturalId(Airline.class);
-			naturalIdentifier.using("companyName", companyName);
-			airline = (Airline)naturalIdentifier.load();
+			airline = (Airline) session.get(Airline.class, alID);
 			Hibernate.initialize(airline.getFleet());
-			logger.info(airline.getCompanyName() + " has been retrieved.");
+			logger.debug(airline.getCompanyName() + " has been retrieved.");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -104,5 +133,30 @@ public class AirlineDAO {
 		
 		return airline;
 	}
-
+	
+	public Airline getAirline(String companyName) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		Airline airline = null;
+		
+		try {
+			tx = session.beginTransaction();
+			NaturalIdLoadAccess<Airline> naturalIdentifier = session.byNaturalId(Airline.class);
+			naturalIdentifier.using("companyName", companyName);
+			airline = (Airline)naturalIdentifier.load();
+			Hibernate.initialize(airline.getFleet());
+			logger.debug(airline.getCompanyName() + " has been retrieved.");
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		
+		return airline;
+	}
+	
 }

@@ -20,6 +20,11 @@
 		<property name="birthDate" column="birthDate" type="date"/>
 		<property name="age" column="age" type="int"/>
 		<property name="isAdmin" column="isAdmin" type="boolean"/>
+		
+		<set name="trips" table="trip" cascade="save-update" lazy="true" fetch="select">
+			<key column="uID" />
+			<many-to-many column="fID" class="edu.sjsu.cs157a.models.Flight" />
+		</set>
 	
 	</class>
 </hibernate-mapping>
