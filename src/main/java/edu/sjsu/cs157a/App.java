@@ -17,10 +17,10 @@ public class App {
 		String inputHolder = "";
 		Scanner scan = new Scanner(System.in);
 		
-		
-		while(true) {
-			tempUI = userAuth();
-			if(tempUI!=null) {
+		tempUI = userAuth();
+		if(tempUI != null) {
+			while(true) {
+				
 				// logged in user
 				System.out.println("You have just logged in.");
 				System.out.println("What feature would you like to use:");
@@ -39,22 +39,25 @@ public class App {
 				}
 				System.out.println("[0] Exit.");
 				inputHolder = scan.nextLine();
-				if(tempUI.getIsAdmin()) {
-					if(adminFunctions(inputHolder, tempUI) == false) break;
-				}else {
-					if(noneAdminFunctions(inputHolder, tempUI) == false) break;
+				if(Integer.parseInt(inputHolder) != 0) {
+					if(tempUI.getIsAdmin()) {
+						if(adminFunctions(inputHolder, tempUI) == false) break;
+					}else {
+						if(noneAdminFunctions(inputHolder, tempUI) == false) break;
+					}
 				}
+				else break;
 			}
-			else {
-				// user not logged in
-				System.out.println("You will have to loggin to use all the features");
-				System.out.println("Enter '0' to end the application.");
-				inputHolder = scan.nextLine();
-				if(Integer.parseInt(inputHolder) == 0);
-				
-			}
-			System.out.println("Thanks for using our application. Bye!");
 		}
+		else {
+			// user not logged in
+			System.out.println("You will have to loggin to use all the features");
+			System.out.println("Enter '0' to end the application.");
+			inputHolder = scan.nextLine();
+			if(Integer.parseInt(inputHolder) == 0);
+			
+		}
+		System.out.println("Thanks for using our application. Bye!");
 		scan.close();
 	}
 	
@@ -64,7 +67,7 @@ public class App {
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 2) {
-			listAllTrips();
+			listAllTrips(tempUI);
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 3) {
@@ -72,7 +75,7 @@ public class App {
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 4) {
-			deleteAccount();
+			deleteAccount(tempUI);
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 5) {
@@ -114,7 +117,7 @@ public class App {
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 2) {
-			listAllTrips();
+			listAllTrips(tempUI);
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 3) {
@@ -122,7 +125,7 @@ public class App {
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 4) {
-			deleteAccount();
+			deleteAccount(tempUI);
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 0) {
@@ -143,8 +146,8 @@ public class App {
 			System.out.println("Do you want to:");
 			System.out.println("[1] Sign In");
 			System.out.println("[2] Register");
-			System.out.println("[3] Exit");
-			inputHolder = scan.nextLine();
+			System.out.println("[3] Exit\n");
+			inputHolder = scan.next();
 			// ****************
 			// User Sign in
 			if(Integer.parseInt(inputHolder) == 1){
@@ -156,42 +159,9 @@ public class App {
 			// *********************
 			// REGISTER NEW USER
 			else if(Integer.parseInt(inputHolder) == 2){
-				tempUI = new User();
-				System.out.println("Please enter your first name: ");
-				inputHolder = scan.nextLine();
-				tempUI.setFname(inputHolder);
-				System.out.println("Please enter your last name: ");
-				inputHolder = scan.nextLine();
-				tempUI.setLname(inputHolder);
-				System.out.println("Please enter your email Address: ");
-				inputHolder = scan.nextLine();
-				tempUI.setEmail(inputHolder);
-				System.out.println("Please enter your password: ");
-				inputHolder = scan.nextLine();
-				tempUI.setPassword(inputHolder);
-				System.out.println("Please enter your birth date: (yyyy-mm-dd) ");
-				inputHolder = scan.nextLine();
-				tempUI.setBirthDate(Date.valueOf(inputHolder));
-				System.out.println("Please enter your age: ");
-				inputHolder = scan.nextLine();
-				tempUI.setAge(Integer.parseInt(inputHolder));
-				while(true) {
-					System.out.println("Please enter your admin status: ");
-					System.out.println("[1] Yes");
-					System.out.println("[2] No");
-					inputHolder = scan.nextLine();
-					if(Integer.parseInt(inputHolder) == 1) {
-						tempUI.setIsAdmin(true);
-						break;
-					}
-					else if(Integer.parseInt(inputHolder) == 2) {
-						tempUI.setIsAdmin(false);
-						break;
-					}
-					else System.err.println("Invalid Input, try again.");
-				}
-				return tempUI;
-				
+				UserAuthController uc = new UserAuthController();
+				int uID = uc.Register();
+				System.out.println("Welcome, this is your user ID: " + uID);
 			}
 			else if(Integer.parseInt(inputHolder) == 3){
 				isDone = true;
@@ -201,7 +171,7 @@ public class App {
 				System.out.println("Invalid Selection, Please Try Again...");
 				System.out.println("Do you want to:");
 				System.out.println("[1] Sign In");
-				System.out.println("[2] Register");
+				System.out.println("[2] Register\n");
 				inputHolder = scan.nextLine();
 			}
 			
@@ -215,8 +185,9 @@ public class App {
 		sc.run();
 	}
 	
-	static void listAllTrips() {
-		
+	static void listAllTrips(User user) {
+		UserAuthController uc = new UserAuthController();
+		uc.showTrips(user);
 	}
 	
 	static void updateAccount(User tempUI) {
@@ -292,8 +263,9 @@ public class App {
 		scan.close();
 	}
 	
-	static void deleteAccount() {
-		
+	static void deleteAccount(User tempUI) {
+		UserAuthController uc = new UserAuthController();
+		uc.removeUser(tempUI);
 	}
 
 	static void mostDepartingAirport() {
