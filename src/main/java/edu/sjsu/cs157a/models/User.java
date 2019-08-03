@@ -8,7 +8,7 @@ public class User {
 	
 	public User() { } 
 
-	public User(String fname, String lname, String email, String password, Date birthDate, Boolean isAdmin) {
+	public User(String fname, String lname, String email, String password, Date birthDate, int age, Boolean isAdmin) {
 		super();
 		this.fname = fname;
 		this.lname = lname;
