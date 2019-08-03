@@ -36,7 +36,7 @@ public class AirportDAO {
 			NaturalIdLoadAccess<Airport> naturalIdentifier = session.byNaturalId(Airport.class);
 			naturalIdentifier.using("name", name);
 			airport = (Airport)naturalIdentifier.load();
-			logger.info(airport.getName() + " has been retrieved.");
+			logger.debug(airport.getName() + " has been retrieved.");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -58,7 +58,7 @@ public class AirportDAO {
 		try {
 			tx = session.beginTransaction();
 			airport = (Airport) session.get(Airport.class, apID);
-			logger.info(airport.getName() + " has been retrieved.");
+			logger.debug(airport.getName() + " has been retrieved.");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)

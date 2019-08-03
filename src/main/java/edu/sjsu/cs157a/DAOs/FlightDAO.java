@@ -6,23 +6,19 @@ import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.sjsu.cs157a.models.Airport;
 import edu.sjsu.cs157a.models.Flight;
-import edu.sjsu.cs157a.models.Plane;
 import edu.sjsu.cs157a.models.User;
 
 public class FlightDAO {
@@ -47,7 +43,11 @@ public class FlightDAO {
 		try {
 			tx = session.beginTransaction();
 			flight = (Flight) session.get(Flight.class, fID);
-			logger.info(flight + " has been retrieved.");
+			Hibernate.initialize(flight.getDeparture());
+			Hibernate.initialize(flight.getDestination());
+			Hibernate.initialize(flight.getAirline());
+			Hibernate.initialize(flight.getManifest());
+			logger.debug(flight + " has been retrieved.");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -73,7 +73,7 @@ public class FlightDAO {
 
 		try {
 			tx = session.beginTransaction();
-			logger.info("Searhing with the following criteria...." + departure.getCity() + " " + destination.getCity() + " " +
+			logger.debug("Searhing with the following criteria...." + departure.getCity() + " " + destination.getCity() + " " +
 						departureDate + " " + sortByPrice);
 
 			CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -89,10 +89,11 @@ public class FlightDAO {
 			
 			flights = session.createQuery(cr).list();
 			for(Flight f : flights) { 
-				logger.info(f + " matches criteria.");
+				logger.debug(f + " matches criteria.");
 				Hibernate.initialize(f.getDeparture());
 				Hibernate.initialize(f.getDestination());
 				Hibernate.initialize(f.getAirline());
+				Hibernate.initialize(f.getPlane());
 				Hibernate.initialize(f.getManifest());
 			}
 			
@@ -116,5 +117,26 @@ public class FlightDAO {
 			flights.sort(priceComp);
 		}
 		return flights;
+	}
+	
+	public void addUserToFlight(Integer fID, User user) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		Flight flight = null;
+
+		try {
+			tx = session.beginTransaction();
+			flight = (Flight) session.get(Flight.class, fID);
+			flight.getManifest().add(user);
+			logger.debug(user + " has been added to " + flight + ".");
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
 	}
 }

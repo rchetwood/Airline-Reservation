@@ -1,14 +1,17 @@
 package edu.sjsu.cs157a.DAOs;
 
 import java.sql.Date;
+import java.util.Set;
 
 import javax.security.sasl.AuthenticationException;
 
+import org.hibernate.Hibernate;
 import org.hibernate.cfg.Configuration;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.sjsu.cs157a.DAOs.UserDAO;
+import edu.sjsu.cs157a.models.Flight;
 import edu.sjsu.cs157a.models.User;
 
 public class UserDAOTest extends BaseTest {
@@ -66,5 +69,15 @@ public class UserDAOTest extends BaseTest {
 		riley = userDAO.getUser("rc@gmail.com", "pass123");
 		int newTrips = riley.getTrips().size();
 		assert oldTrips == newTrips - 1;
+	}
+	
+	@Test
+	public void getAllUsersTripsTest() throws AuthenticationException {
+		User riley = userDAO.getUser("rc@gmail.com", "pass123");
+		Set<Flight> trips = userDAO.getAllUsersTrips(riley.getuID());
+		for(Flight f: trips) {
+			assert f.getManifest().contains(riley);
+		}
+		
 	}
 }

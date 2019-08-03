@@ -30,7 +30,7 @@ public class AirlineDAO {
 		try {
 			tx = session.beginTransaction();
 			alID = (Integer) session.save(newAirline);
-			logger.info(newAirline + " has been added with alID of " + alID + ".");
+			logger.debug(newAirline + " has been added with alID of " + alID + ".");
 			tx.commit();
 		} catch(HibernateException e) {
 			if (tx != null)
@@ -60,7 +60,7 @@ public class AirlineDAO {
 			
 			// add to fleet
 			airline.addToFleet(p);
-			logger.info(p + " has been add to " + airline.getCompanyName());
+			logger.debug(p + " has been add to " + airline.getCompanyName());
 			
 			tx.commit();
 		} catch (HibernateException e) {
@@ -96,7 +96,7 @@ public class AirlineDAO {
 			
 			// add to fleet
 			airline.addToFleet(p);
-			logger.info(p + " has been add to " + airline.getCompanyName());
+			logger.debug(p + " has been add to " + airline.getCompanyName());
 			
 			tx.commit();
 		} catch (HibernateException e) {
@@ -120,7 +120,7 @@ public class AirlineDAO {
 			tx = session.beginTransaction();
 			airline = (Airline) session.get(Airline.class, alID);
 			Hibernate.initialize(airline.getFleet());
-			logger.info(airline.getCompanyName() + " has been retrieved.");
+			logger.debug(airline.getCompanyName() + " has been retrieved.");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
@@ -145,7 +145,7 @@ public class AirlineDAO {
 			naturalIdentifier.using("companyName", companyName);
 			airline = (Airline)naturalIdentifier.load();
 			Hibernate.initialize(airline.getFleet());
-			logger.info(airline.getCompanyName() + " has been retrieved.");
+			logger.debug(airline.getCompanyName() + " has been retrieved.");
 			tx.commit();
 		} catch (HibernateException e) {
 			if (tx != null)
