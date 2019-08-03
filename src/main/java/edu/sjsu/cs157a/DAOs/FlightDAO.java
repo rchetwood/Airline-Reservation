@@ -2,8 +2,11 @@ package edu.sjsu.cs157a.DAOs;
 
 import java.sql.Date;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -11,6 +14,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -138,5 +142,106 @@ public class FlightDAO {
 		} finally {
 			session.close();
 		}
+	}
+	
+	/*public void popularity() {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		
+
+		try {
+			tx = session.beginTransaction();
+		
+
+			CriteriaBuilder cb = session.getCriteriaBuilder();
+			
+			CriteriaQuery<Tuple> cr = cb.createTupleQuery();
+			Root<Flight> flightTable = cr.from(Flight.class);
+			
+			cr.multiselect(flightTable.get("departure"), cb.count(flightTable.get("departure")));
+			cr.groupBy(flightTable.get("departure"));
+			List<Tuple> ap = session.createQuery(cr).list();
+
+			for(Tuple t : ap) {
+				System.out.println(t.get(0, Airport.class).getName() + " " + t.get(1));
+			}
+			
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}		
+	}*/
+	
+	public Map<String, Integer> popularDepartures() {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		Map<String, Integer> popularDepartures = new HashMap<>();		
+
+		try {
+			tx = session.beginTransaction();
+			
+			Query q = session.createSQLQuery("SELECT name, count(name) "
+										   + "FROM trip NATURAL JOIN flight "
+										   + "NATURAL JOIN fleet INNER JOIN airport "
+										   + "ON departure=apID "
+										   + "GROUP BY name "
+										   + "ORDER BY COUNT(name) DESC");
+			List<Object[]> result = q.list();
+			for(Object[] row : result) {
+				String coName = row[0].toString();
+				int num = Integer.parseInt(row[1].toString());
+				popularDepartures.put(coName, num);
+			}
+			
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}		
+		
+		return popularDepartures;
+	}
+	
+	public Map<String, Integer> popularDestination() {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		Map<String, Integer> popularDepartures = new HashMap<>();		
+
+		try {
+			tx = session.beginTransaction();
+			
+			Query q = session.createSQLQuery("SELECT name, count(name) "
+										   + "FROM trip NATURAL JOIN flight "
+										   + "NATURAL JOIN fleet INNER JOIN airport "
+										   + "ON destination=apID "
+										   + "GROUP BY name "
+										   + "ORDER BY COUNT(name) DESC");
+			List<Object[]> result = q.list();
+			for(Object[] row : result) {
+				String coName = row[0].toString();
+				int num = Integer.parseInt(row[1].toString());
+				popularDepartures.put(coName, num);
+			}
+			
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}		
+		
+		return popularDepartures;
 	}
 }

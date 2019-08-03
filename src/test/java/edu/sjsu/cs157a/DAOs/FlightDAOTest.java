@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 import javax.security.sasl.AuthenticationException;
@@ -80,6 +81,24 @@ public class FlightDAOTest extends BaseTest {
 		flight  = flightDAO.getFlight(searchResults.get(0).getfID());
 		Set<User> newManifest = flight.getManifest();
 		assert !oldManifest.contains(user) && newManifest.contains(user);
+	}
+	
+	@Test
+	public void popularDeparturesTest() {
+		HashMap<String, Integer> popDepart = (HashMap<String, Integer>) flightDAO.popularDepartures();
+		for(String depart : popDepart.keySet()) {
+			System.out.println(depart + " " + popDepart.get(depart));
+		}
+		assert popDepart.get("LaGrange Callaway Airport") == 2;
+	}
+	
+	@Test
+	public void popularDestinationsTest() {
+		HashMap<String, Integer> popDest = (HashMap<String, Integer>) flightDAO.popularDestination();
+		for(String dest : popDest.keySet()) {
+			System.out.println(dest + " " + popDest.get(dest));
+		}
+		assert popDest.get("Indianapolis International Airport") == 2;
 	}
 
 }
