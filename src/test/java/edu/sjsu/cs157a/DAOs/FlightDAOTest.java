@@ -94,11 +94,20 @@ public class FlightDAOTest extends BaseTest {
 	
 	@Test
 	public void popularDestinationsTest() {
-		HashMap<String, Integer> popDest = (HashMap<String, Integer>) flightDAO.popularDestination();
+		HashMap<String, Integer> popDest = (HashMap<String, Integer>) flightDAO.popularDestinations();
 		for(String dest : popDest.keySet()) {
 			System.out.println(dest + " " + popDest.get(dest));
 		}
 		assert popDest.get("Indianapolis International Airport") == 2;
+	}
+	
+	@Test
+	public void popularAirlineTest() {
+		HashMap<String, Integer> popAirline = (HashMap<String, Integer>) flightDAO.popularAirlines();
+		for(String airline : popAirline.keySet()) {
+			System.out.println(airline + " " + popAirline.get(airline));
+		}
+		assert popAirline.get("Spirit Airlines") == 3;
 	}
 
 }

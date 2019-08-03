@@ -144,26 +144,23 @@ public class FlightDAO {
 		}
 	}
 	
-	/*public void popularity() {
+	public Map<String, Integer> popularAirlines() {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
-		
+		Map<String, Integer> popularAirlines = new HashMap<>();		
 
 		try {
 			tx = session.beginTransaction();
-		
-
-			CriteriaBuilder cb = session.getCriteriaBuilder();
 			
-			CriteriaQuery<Tuple> cr = cb.createTupleQuery();
-			Root<Flight> flightTable = cr.from(Flight.class);
-			
-			cr.multiselect(flightTable.get("departure"), cb.count(flightTable.get("departure")));
-			cr.groupBy(flightTable.get("departure"));
-			List<Tuple> ap = session.createQuery(cr).list();
-
-			for(Tuple t : ap) {
-				System.out.println(t.get(0, Airport.class).getName() + " " + t.get(1));
+			Query q = session.createSQLQuery("select companyName, count(companyName) "
+										   + "from trip natural join flight "
+										   + "natural join fleet natural join airline "
+										   + "group by companyName order by count(companyName) desc");
+			List<Object[]> result = q.list();
+			for(Object[] row : result) {
+				String coName = row[0].toString();
+				int num = Integer.parseInt(row[1].toString());
+				popularAirlines.put(coName, num);
 			}
 			
 			tx.commit();
@@ -175,7 +172,9 @@ public class FlightDAO {
 		} finally {
 			session.close();
 		}		
-	}*/
+		
+		return popularAirlines;
+	}
 	
 	public Map<String, Integer> popularDepartures() {
 		Session session = sessionFactory.openSession();
@@ -211,7 +210,7 @@ public class FlightDAO {
 		return popularDepartures;
 	}
 	
-	public Map<String, Integer> popularDestination() {
+	public Map<String, Integer> popularDestinations() {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		Map<String, Integer> popularDepartures = new HashMap<>();		
