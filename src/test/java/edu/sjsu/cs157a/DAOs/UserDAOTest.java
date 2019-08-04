@@ -93,4 +93,15 @@ public class UserDAOTest extends BaseTest {
 		int newSize = rileysTrips.size();
 		assert oldSize == newSize + 1;
 	}
+	
+	@Test
+	public void updateUserTest() throws AuthenticationException {
+		User john = new User("John", "Smith", "jsmith@gmail.com", "pass123", Date.valueOf("1986-11-06"), false);
+		Integer uID = userDAO.addUser(john);
+		john = userDAO.getUser("jsmith@gmail.com", "pass123");
+		// null values ignored
+		userDAO.updateUser(uID, null, "Jay", null, null, null, null);
+		john = userDAO.getUser("jsmith@gmail.com", "pass123");
+		assert "Jay".equals(john.getLname());
+	}
 }
