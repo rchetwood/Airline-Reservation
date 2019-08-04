@@ -5,24 +5,23 @@ import java.util.Scanner;
 import javax.security.sasl.AuthenticationException;
 
 import edu.sjsu.cs157a.models.User;
- 
-
+import edu.sjsu.cs157a.controllers.AdminFunctionsController;
 import edu.sjsu.cs157a.controllers.SearchController;
 import edu.sjsu.cs157a.controllers.UserAuthController;
 
 public class App {
-	
+
+	static Scanner scan = new Scanner(System.in);
 	public static void main(String[] args) {
 		User tempUI = new User();
 		String inputHolder = "";
-		Scanner scan = new Scanner(System.in);
 		
 		tempUI = userAuth();
 		if(tempUI != null) {
 			while(true) {
 				
 				// logged in user
-				System.out.println("You have just logged in.");
+				System.out.println("\n\nYou have just logged in.");
 				System.out.println("What feature would you like to use:");
 				System.out.println("[1] Search a flight;");
 				System.out.println("[2] Show all trips;");
@@ -58,7 +57,7 @@ public class App {
 			
 		}
 		System.out.println("Thanks for using our application. Bye!");
-		scan.close();
+		
 	}
 	
 	static boolean adminFunctions(String inputHolder, User tempUI) {
@@ -141,7 +140,6 @@ public class App {
 		boolean isDone = false;
 		String inputHolder = "";
 		User tempUI = null;
-		Scanner scan = new Scanner(System.in);
 		while(!isDone){
 			System.out.println("Do you want to:");
 			System.out.println("[1] Sign In");
@@ -154,7 +152,6 @@ public class App {
 			if(Integer.parseInt(inputHolder) == 1){
 				UserAuthController uc = new UserAuthController();
 				tempUI = uc.Login();
-				scan.close();
 				return tempUI;
 			}
 			
@@ -167,8 +164,6 @@ public class App {
 			}
 			else if(Integer.parseInt(inputHolder) == 3){
 				isDone = true;
-				scan.close();
-				break;
 			}
 			else{
 				System.out.println("Invalid Selection, Please Try Again...");
@@ -179,7 +174,6 @@ public class App {
 			}
 			
 		}
-		scan.close();
 		return tempUI;
 	}
 	
@@ -194,7 +188,6 @@ public class App {
 	}
 	
 	static void updateAccount(User tempUI) {
-		Scanner scan = new Scanner(System.in);
 		String inputHolder;
 		while(true) {
 			System.out.println("Here is your account information:");
@@ -262,8 +255,6 @@ public class App {
 			}
 			else System.out.println("Invalid Input, try again.");
 		}
-
-		scan.close();
 	}
 	
 	static void deleteAccount(User tempUI) {
@@ -272,15 +263,18 @@ public class App {
 	}
 
 	static void mostDepartingAirport() {
-		
+		AdminFunctionsController afc = new AdminFunctionsController();
+		afc.getPopDepartures();
 	}
 	
 	static void mostDestinationAirport() {
-		
+		AdminFunctionsController afc = new AdminFunctionsController();
+		afc.getPopDestination();
 	}
 	
 	static void mostAirline() {
-		
+		AdminFunctionsController afc = new AdminFunctionsController();
+		afc.getPopAirlines();
 	}
 	
 	static void mostPlanes() {
