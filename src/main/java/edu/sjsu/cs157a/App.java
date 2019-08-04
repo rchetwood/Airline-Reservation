@@ -147,12 +147,14 @@ public class App {
 			System.out.println("[1] Sign In");
 			System.out.println("[2] Register");
 			System.out.println("[3] Exit\n");
-			inputHolder = scan.next();
+			if(scan.hasNextLine())
+				inputHolder = scan.nextLine();
 			// ****************
 			// User Sign in
 			if(Integer.parseInt(inputHolder) == 1){
 				UserAuthController uc = new UserAuthController();
 				tempUI = uc.Login();
+				scan.close();
 				return tempUI;
 			}
 			
@@ -165,6 +167,7 @@ public class App {
 			}
 			else if(Integer.parseInt(inputHolder) == 3){
 				isDone = true;
+				scan.close();
 				break;
 			}
 			else{
