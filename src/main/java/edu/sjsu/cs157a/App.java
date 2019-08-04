@@ -32,7 +32,7 @@ public class App {
 					System.out.println("[5] Show most popular departing airports;");
 					System.out.println("[6] Show most popular destination airports;");
 					System.out.println("[7] Show most popular airlines;");
-					System.out.println("[8] Show most popular planes;");
+					System.out.println("[8] Show users with no trip records;");
 					System.out.println("[9] Show total amount of planes for a airline;");
 					System.out.println("[10] Show all users that are above the average user age;");
 				}
@@ -90,15 +90,15 @@ public class App {
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 8) {
-			mostPlanes();
+			userWithNoTrip();
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 9) {
-			totalPlanes();
+			AirlinesWithMoreThan();
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 10) {
-			aboveAvgUsers();
+			AboveAVGCapcity();
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 0) {
@@ -141,6 +141,7 @@ public class App {
 		String inputHolder = "";
 		User tempUI = null;
 		while(!isDone){
+			scan.reset();
 			System.out.println("Do you want to:");
 			System.out.println("[1] Sign In");
 			System.out.println("[2] Register");
@@ -277,15 +278,18 @@ public class App {
 		afc.getPopAirlines();
 	}
 	
-	static void mostPlanes() {
-		
+	static void userWithNoTrip() {
+		AdminFunctionsController afc = new AdminFunctionsController();
+		afc.getUserWithNoTrip();
 	}
 	
-	static void totalPlanes() {
-		
+	static void AirlinesWithMoreThan() {
+		AdminFunctionsController afc = new AdminFunctionsController();
+		afc.getAirlinesWithMoreThan();
 	}
 	
-	static void aboveAvgUsers() {
-		
+	static void AboveAVGCapcity() {
+		AdminFunctionsController afc = new AdminFunctionsController();
+		afc.getAboveAVGCapcity();
 	}
 }
