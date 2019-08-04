@@ -1,8 +1,14 @@
 package edu.sjsu.cs157a.DAOs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -11,6 +17,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.sjsu.cs157a.models.Flight;
+import edu.sjsu.cs157a.models.User;
 
 public class StatisticsDAO {
 	
@@ -114,4 +123,40 @@ public class StatisticsDAO {
 
 		return popularDepartures;
 	}
+	
+	public List<User> usersWithNoTrips() {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		List<User> triplessUsers = new ArrayList<User>();
+
+		try {
+			tx = session.beginTransaction();
+
+
+			Query q = session.createSQLQuery("select user.uID "
+										   + "FROM user left outer join trip "
+										   	+ "on user.uID=trip.uID "
+										   + "where fID is null;");
+			List<Object> result = q.list();
+			for (Object row : result) {
+				Integer uID = (Integer) row;
+				User user = (User)session.get(User.class, uID);
+				logger.debug(user + " retrieved.");
+				triplessUsers.add(user);
+			}
+
+
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+
+		return triplessUsers;
+	}
+	
 }
