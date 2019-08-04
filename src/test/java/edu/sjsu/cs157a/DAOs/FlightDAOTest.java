@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 import javax.security.sasl.AuthenticationException;
@@ -81,5 +82,6 @@ public class FlightDAOTest extends BaseTest {
 		Set<User> newManifest = flight.getManifest();
 		assert !oldManifest.contains(user) && newManifest.contains(user);
 	}
+	
 
 }

@@ -80,4 +80,17 @@ public class UserDAOTest extends BaseTest {
 		}
 		
 	}
+	
+	@Test
+	public void removeTripTest() throws AuthenticationException {
+		User riley = userDAO.getUser("rc@gmail.com", "pass123");
+		Set<Flight> rileysTrips = riley.getTrips();
+		int oldSize = rileysTrips.size();
+		Flight removeThisFlight = rileysTrips.iterator().next();
+		userDAO.removeTrip(riley.getuID(), removeThisFlight);
+		riley = userDAO.getUser("rc@gmail.com", "pass123");
+		rileysTrips = riley.getTrips();
+		int newSize = rileysTrips.size();
+		assert oldSize == newSize + 1;
+	}
 }

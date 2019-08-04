@@ -177,6 +177,7 @@ public class UserDAO {
 			session.close();
 		}
 	}
+	
 
 	private String hashPassword(String unhashedPassword) {
 		String salt1 = "$4J", salt2 = "M%a";

@@ -2,8 +2,11 @@ package edu.sjsu.cs157a.DAOs;
 
 import java.sql.Date;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -11,6 +14,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -139,4 +143,5 @@ public class FlightDAO {
 			session.close();
 		}
 	}
+	
 }
