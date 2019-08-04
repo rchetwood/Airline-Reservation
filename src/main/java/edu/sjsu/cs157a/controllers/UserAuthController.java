@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.controllers;
 
 import java.sql.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -12,11 +13,12 @@ import org.hibernate.cfg.Configuration;
 
 import edu.sjsu.cs157a.DAOs.UserDAO;
 import edu.sjsu.cs157a.models.Flight;
+import edu.sjsu.cs157a.models.Plane;
 import edu.sjsu.cs157a.models.User;
 
 public class UserAuthController {
 	private static UserDAO userDAO;
-	
+	public static Scanner scan = new Scanner(System.in);
 	public UserAuthController() {
 		SessionFactory sf = new Configuration().configure("devHibernate.cfg.xml").buildSessionFactory();
 		userDAO = new UserDAO();
@@ -24,7 +26,6 @@ public class UserAuthController {
 	}
 	
 	public User Login() {
-		Scanner scan = new Scanner(System.in);
 		String emailHolder;
 		String pwHolder;
 		String inputHolder;
@@ -48,7 +49,9 @@ public class UserAuthController {
 					System.out.println("[2] No.");
 					inputHolder = scan.nextLine();
 					if(Integer.parseInt(inputHolder) == 1) break;
-					else if(Integer.parseInt(inputHolder) == 2) return currentUser;
+					else if(Integer.parseInt(inputHolder) == 2) {
+						return currentUser;
+					}
 					else System.err.println("Invalid Input.");
 				}
 			}
@@ -56,7 +59,6 @@ public class UserAuthController {
 	}
 	
 	public int Register() {
-		Scanner scan = new Scanner(System.in);
 		String inputHolder;
 		User newUI = new User();
 		int newUID;
@@ -93,7 +95,6 @@ public class UserAuthController {
 			}
 			else System.err.println("Invalid Input, try again.");
 		}
-		scan.close();
 		newUID = userDAO.addUser(newUI);
 		return newUID;
 	}
@@ -105,5 +106,22 @@ public class UserAuthController {
 	
 	public void removeUser(User currentUser) {
 		userDAO.removeUser(currentUser.getuID());
+	}
+	
+	public void addNewTrip(User currentUser) {
+		boolean happyResult = false;
+		List<Flight> results = null;
+		//while(!happyResult) {
+			SearchController sc = new SearchController();
+			results = sc.pickFlights();
+			for(int i = 1; i < results.size(); i++) {
+				System.out.println("[" + i + "] " + results.get(i));
+			}
+
+		System.out.println("Enter the flight you want to pick: ");
+		if(scan.hasNextLine()) {
+			String tempHolder = scan.nextLine();
+			userDAO.addTrip(currentUser.getuID(), results.get(Integer.parseInt(tempHolder)).getfID());
+		}
 	}
 }

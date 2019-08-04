@@ -19,7 +19,6 @@ public class App {
 		tempUI = userAuth();
 		if(tempUI != null) {
 			while(true) {
-				
 				// logged in user
 				System.out.println("\n\nYou have just logged in.");
 				System.out.println("What feature would you like to use:");
@@ -27,14 +26,15 @@ public class App {
 				System.out.println("[2] Show all trips;");
 				System.out.println("[3] Update account information;");
 				System.out.println("[4] Delete your account;");
+				System.out.println("[5] Add a trip;");
 				if(tempUI.getIsAdmin()) {
 					System.out.println("**** Admin Features ****");
-					System.out.println("[5] Show most popular departing airports;");
-					System.out.println("[6] Show most popular destination airports;");
-					System.out.println("[7] Show most popular airlines;");
-					System.out.println("[8] Show users with no trip records;");
-					System.out.println("[9] Show total amount of planes for a airline;");
-					System.out.println("[10] Show all users that are above the average user age;");
+					System.out.println("[6] Show most popular departing airports;");
+					System.out.println("[7] Show most popular destination airports;");
+					System.out.println("[8] Show most popular airlines;");
+					System.out.println("[9] Show users with no trip records;");
+					System.out.println("[10] Show total amount of planes for a airline;");
+					System.out.println("[11] Show all users that are above the average user age;");
 				}
 				System.out.println("[0] Exit.");
 				inputHolder = scan.nextLine();
@@ -78,26 +78,30 @@ public class App {
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 5) {
-			mostDepartingAirport();
+			addATrip(tempUI);
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 6) {
-			mostDestinationAirport();
+			mostDepartingAirport();
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 7) {
-			mostAirline();
+			mostDestinationAirport();
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 8) {
-			userWithNoTrip();
+			mostAirline();
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 9) {
-			AirlinesWithMoreThan();
+			userWithNoTrip();
 			return true;
 		}
 		else if(Integer.parseInt(inputHolder) == 10) {
+			AirlinesWithMoreThan();
+			return true;
+		}
+		else if(Integer.parseInt(inputHolder) == 11) {
 			AboveAVGCapcity();
 			return true;
 		}
@@ -127,6 +131,10 @@ public class App {
 			deleteAccount(tempUI);
 			return true;
 		}
+		else if(Integer.parseInt(inputHolder) == 5) {
+			addATrip(tempUI);
+			return true;
+		}
 		else if(Integer.parseInt(inputHolder) == 0) {
 			return false;
 		}
@@ -141,7 +149,6 @@ public class App {
 		String inputHolder = "";
 		User tempUI = null;
 		while(!isDone){
-			inputHolder = "";
 			scan.reset();
 			System.out.println("Do you want to:");
 			System.out.println("[1] Sign In");
@@ -264,6 +271,11 @@ public class App {
 		uc.removeUser(tempUI);
 	}
 
+	static void addATrip(User tempUI) {
+		UserAuthController uc = new UserAuthController();
+		uc.addNewTrip(tempUI);
+	}
+	
 	static void mostDepartingAirport() {
 		AdminFunctionsController afc = new AdminFunctionsController();
 		afc.getPopDepartures();
