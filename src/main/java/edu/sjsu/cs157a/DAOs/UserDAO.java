@@ -1,5 +1,6 @@
 package edu.sjsu.cs157a.DAOs;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -136,6 +137,35 @@ public class UserDAO {
 			session.close();
 		}
 		
+	}
+	
+	public void updateUser(Integer uID,String fname, String lname, String email, String password, Date birthDate, Boolean isAdmin) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+
+		try {
+			tx = session.beginTransaction();
+			User user = (User) session.get(User.class, uID);
+			
+			if(fname!=null) user.setFname(fname);
+			if(lname!=null) user.setLname(lname);
+			if(email!=null) user.setEmail(email);
+			if(password!=null) user.setPassword(password);
+			if(birthDate!=null) user.setBirthDate(birthDate);
+			if(isAdmin!=null) user.setIsAdmin(isAdmin);
+			
+			session.update(user);
+			
+			logger.debug(user + " has been deleted.");
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
 	}
 
 	public void removeUser(Integer uID) {
