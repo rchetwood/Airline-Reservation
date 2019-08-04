@@ -141,6 +141,7 @@ public class App {
 		String inputHolder = "";
 		User tempUI = null;
 		while(!isDone){
+			inputHolder = "";
 			scan.reset();
 			System.out.println("Do you want to:");
 			System.out.println("[1] Sign In");
