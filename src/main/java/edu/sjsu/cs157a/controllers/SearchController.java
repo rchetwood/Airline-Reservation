@@ -33,6 +33,7 @@ public class SearchController {
 		System.out.print("\nDeparture date: ");
 		String departingDate = in.nextLine();
 		
+		
 		Airport a1 = airportDAO.getAirport(departingAirport);
 		Airport a2 = airportDAO.getAirport(destinationAirport);
 		
