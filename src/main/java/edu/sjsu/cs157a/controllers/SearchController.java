@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.controllers;
 
 import java.sql.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -28,9 +29,9 @@ public class SearchController {
 		Scanner in = new Scanner(System.in);
 		System.out.print("Departing airport: ");
 		String departingAirport = in.nextLine();
-		System.out.print("\nDestination airport: ");
+		System.out.print("Destination airport: ");
 		String destinationAirport = in.nextLine();
-		System.out.print("\nDeparture date: ");
+		System.out.print("Departure date: ");
 		String departingDate = in.nextLine();
 		
 		
@@ -45,13 +46,19 @@ public class SearchController {
 			if(Integer.parseInt(temp) == 1) {
 				List<Flight> searchResults = flightDAO.search(a1, a2, Date.valueOf(departingDate), true);
 				System.out.println("========================================");
-				System.out.println(searchResults);
+				Iterator<Flight> it = searchResults.iterator();
+			    while(it.hasNext()){
+			        System.out.println(it.next());
+			    }
 				break;
 			}
 			else if (Integer.parseInt(temp) == 2){
 				List<Flight> searchResults = flightDAO.search(a1, a2, Date.valueOf(departingDate), false);
 				System.out.println("========================================");
-				System.out.println(searchResults);
+				Iterator<Flight> it = searchResults.iterator();
+			    while(it.hasNext()){
+			        System.out.println(it.next());
+			    }
 				break;
 			}
 			else {
@@ -62,7 +69,23 @@ public class SearchController {
 				temp = in.nextLine();
 			}
 		}
-		in.close();
 	
+	}
+	
+	public List<Flight> pickFlights(){
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Departing airport: ");
+		String departingAirport = scan.nextLine();
+		System.out.print("\nDestination airport: ");
+		String destinationAirport = scan.nextLine();
+		System.out.print("\nDeparture date: ");
+		String departingDate = scan.nextLine();
+		
+		
+		Airport a1 = airportDAO.getAirport(departingAirport);
+		Airport a2 = airportDAO.getAirport(destinationAirport);
+
+		List<Flight> searchResults = flightDAO.search(a1, a2, Date.valueOf(departingDate), true);
+		return searchResults;
 	}
 }
