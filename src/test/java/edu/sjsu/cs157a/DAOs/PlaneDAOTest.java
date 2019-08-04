@@ -11,9 +11,9 @@ import org.junit.Test;
 import edu.sjsu.cs157a.models.Plane;
 
 public class PlaneDAOTest extends BaseTest {
-	
-private static PlaneDAO planeDAO;
-	
+
+	private static PlaneDAO planeDAO;
+
 	@BeforeClass
 	public static void init() {
 		try {
@@ -24,26 +24,26 @@ private static PlaneDAO planeDAO;
 			e.printStackTrace();
 		}
 	}
-	
-	@Test 
+
+	@Test
 	public void addPlaneTest() {
 		Plane newPlane = new Plane("Riley", "F-18", 2);
 		Integer pID = planeDAO.addPlane(newPlane);
 		assert pID != null;
 	}
-	
+
 	@Test
 	public void getPlaneTest() {
 		Plane p = planeDAO.getPlane("Boeing", "777");
 		assert p.getManufacturer().equals("Boeing") && p.getModel().equals("777");
 	}
-	
+
 	@Test
 	public void getAllPlanesTest() {
 		ArrayList<Plane> planes = (ArrayList<Plane>) planeDAO.getAllPlanes();
 		assert planes.size() == 10;
 	}
-	
+
 	@Test
 	public void updatePlaneTest() {
 		Plane p = planeDAO.getPlane("Boeing", "777");
@@ -51,10 +51,10 @@ private static PlaneDAO planeDAO;
 		planeDAO.updatePlane(p.getpID(), oldCapacity + 1);
 		p = planeDAO.getPlane("Boeing", "777");
 		int newCapacity = p.getCapacity();
-		assert oldCapacity == newCapacity-1;
+		assert oldCapacity == newCapacity - 1;
 	}
-	
-	@Test 
+
+	@Test
 	public void removePlaneTest() {
 		planeDAO.removePlane("Airbus", "A220");
 		Plane deletedPlane = planeDAO.getPlane("Airbus", "A220");

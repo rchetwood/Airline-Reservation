@@ -83,31 +83,5 @@ public class FlightDAOTest extends BaseTest {
 		assert !oldManifest.contains(user) && newManifest.contains(user);
 	}
 	
-	@Test
-	public void popularDeparturesTest() {
-		HashMap<String, Integer> popDepart = (HashMap<String, Integer>) flightDAO.popularDepartures();
-		for(String depart : popDepart.keySet()) {
-			System.out.println(depart + " " + popDepart.get(depart));
-		}
-		assert popDepart.get("LaGrange Callaway Airport") == 2;
-	}
-	
-	@Test
-	public void popularDestinationsTest() {
-		HashMap<String, Integer> popDest = (HashMap<String, Integer>) flightDAO.popularDestinations();
-		for(String dest : popDest.keySet()) {
-			System.out.println(dest + " " + popDest.get(dest));
-		}
-		assert popDest.get("Indianapolis International Airport") == 2;
-	}
-	
-	@Test
-	public void popularAirlineTest() {
-		HashMap<String, Integer> popAirline = (HashMap<String, Integer>) flightDAO.popularAirlines();
-		for(String airline : popAirline.keySet()) {
-			System.out.println(airline + " " + popAirline.get(airline));
-		}
-		assert popAirline.get("Spirit Airlines") == 3;
-	}
 
 }
