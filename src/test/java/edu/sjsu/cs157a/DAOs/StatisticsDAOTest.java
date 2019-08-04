@@ -1,7 +1,5 @@
 package edu.sjsu.cs157a.DAOs;
 
-import static org.junit.Assert.*;
-
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
