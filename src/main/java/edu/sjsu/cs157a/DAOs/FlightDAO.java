@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.DAOs;
 
 import java.sql.Date;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.sjsu.cs157a.Exceptions.FlightException;
 import edu.sjsu.cs157a.models.Airport;
 import edu.sjsu.cs157a.models.Flight;
 import edu.sjsu.cs157a.models.User;
@@ -68,12 +70,7 @@ public class FlightDAO {
 	public List<Flight> search(Airport departure, Airport destination, Date departureDate, boolean sortByPrice) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
-		List<Flight> flights = null;
-		String searchQuery = "SELECT (companyName, AP1.name, AP2.name, F.departureDate, F.seatsAvailable) "
-				+ "FROM (flight F" + "INNER JOIN fleet USING(internalID) " + "INNER JOIN airline USING(alID) "
-				+ "INNER JOIN airport AP1 ON F.departure=AP1.apID "
-				+ "INNER JOIN airport AP2 ON F.destination=AP2.apID) "
-				+ "WHERE (F.departure=:apID1 AND F.destination=:apID2 AND F.departureDate=:date)";
+		List<Flight> flights = Collections.emptyList();
 
 		try {
 			tx = session.beginTransaction();
@@ -87,8 +84,9 @@ public class FlightDAO {
 			Predicate p1 = cb.and(cb.equal(flightTable.get("departure"), departure));
 			Predicate p2 = cb.and(cb.equal(flightTable.get("destination"), destination));
 			Predicate p3 = cb.and(cb.equal(flightTable.get("departureDate"), departureDate));
+			Predicate p4 = cb.and(cb.gt(flightTable.get("seatsAvailable"), 0));
 			
-			Predicate[] p = {p1,p2,p3};
+			Predicate[] p = {p1,p2,p3,p4};
 			cr.select(flightTable).where(cb.and(p));
 			
 			flights = session.createQuery(cr).list();
@@ -120,10 +118,11 @@ public class FlightDAO {
 			};
 			flights.sort(priceComp);
 		}
+		
 		return flights;
 	}
 	
-	public void addUserToFlight(Integer fID, User user) {
+	public void addUserToFlight(Integer fID, User user) throws FlightException {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		Flight flight = null;
@@ -131,7 +130,11 @@ public class FlightDAO {
 		try {
 			tx = session.beginTransaction();
 			flight = (Flight) session.get(Flight.class, fID);
+			if(!(flight.getSeatsAvailable() > 0)) {
+				throw new FlightException("No seats available.");
+			}
 			flight.getManifest().add(user);
+			flight.setSeatsAvailable(flight.getSeatsAvailable()-1);
 			logger.debug(user + " has been added to " + flight + ".");
 			tx.commit();
 		} catch (HibernateException e) {

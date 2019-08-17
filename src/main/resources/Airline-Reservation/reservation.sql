@@ -155,5 +155,5 @@ LOAD DATA INFILE 'airline.txt' INTO TABLE airline;
 LOAD DATA INFILE 'country.txt' into table country;
 LOAD DATA INFILE 'airport.txt' into table airport;
 LOAD DATA INFILE 'fleet.txt' into table fleet;
-LOAD DATA INFILE 'flight.txt' INTO TABLE flight (internalID, departure, destination, departureDate);
+LOAD DATA INFILE 'flight.txt' INTO TABLE flight (fID,internalID,departure,destination,duration,departureDate,price,seatsAvailable);
 LOAD DATA INFILE 'trip.txt' into table trip;
